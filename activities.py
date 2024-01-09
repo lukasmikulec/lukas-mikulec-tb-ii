@@ -6,6 +6,7 @@ from tkinter import messagebox # for displaying desktop messages
 import tkintermapview as tkmap # for map display
 import geocoder # to get the location based on IP address for the map page
 from datetime import datetime # for generating unique activity identifiers
+from PIL import Image # for dealing with images in CTk Image
 
 # create the gui window
 window = ctk.CTk()
@@ -21,8 +22,30 @@ window.geometry(f"{width}x{height}")
 # set the gui minimum window size
 window.minsize(width,height)
 
+ctk.set_appearance_mode("light")
+
 # define pathways for images used within functions (must be defined outside of functions to be displayed)
-sun_icon = tk.PhotoImage(file="images/sun.png")
+sun_icon = ctk.CTkImage(light_image=Image.open("images/sun_outline.png"),dark_image=Image.open("images/sun_outline_dark.png"), size=(50, 50))
+
+activities_taskbar_icon_outline = ctk.CTkImage(light_image=Image.open("images/sun_outline.png"),dark_image=Image.open("images/sun_outline_dark.png"), size=(20, 20))
+activities_taskbar_icon = ctk.CTkImage(light_image=Image.open("images/sun.png"),dark_image=Image.open("images/sun_dark.png"), size=(20, 20))
+map_taskbar_icon_outline = ctk.CTkImage(light_image=Image.open("images/map_outline.png"), dark_image=Image.open("images/map_outline_dark.png"), size=(16, 16))
+map_taskbar_icon = ctk.CTkImage(light_image=Image.open("images/map.png"), dark_image=Image.open("images/map_dark.png"), size=(16, 16))
+connections_taskbar_icon_outline = ctk.CTkImage(light_image=Image.open("images/phone_card_outline.png"), dark_image=Image.open("images/phone_card_outline_dark.png"), size=(16, 16))
+connections_taskbar_icon = ctk.CTkImage(light_image=Image.open("images/phone_card.png"), dark_image=Image.open("images/phone_card_dark.png"), size=(16, 16))
+account_taskbar_icon_outline = ctk.CTkImage(light_image=Image.open("images/account_outline.png"), dark_image=Image.open("images/account_outline_dark.png"), size=(16, 16))
+account_taskbar_icon = ctk.CTkImage(light_image=Image.open("images/account.png"), dark_image=Image.open("images/account_dark.png"), size=(16, 16))
+
+# define color palette
+background_color = ("#ded9e0","#121212")
+standard_button_color = ("#4F378B", "#c38fff")
+standard_button_hover_color = "#6945c4"
+standard_button_text_color = ("#ebebeb", "#0d0911")
+standard_label_text_color = ("#4F378B","#e2e2e2")
+box_color = ("#fef7ff", "#1e1e1e")
+box_selected_color = ("#e8def7", "#2e2e2e")
+box_hover_color = ("#a193a3", "#383838")
+
 
 # load the current database of users
 usernames = list(pd.read_csv("data/users_data.csv").username)
@@ -44,46 +67,46 @@ def toolbar(current_page_frame, number_of_rows):
     # if the current page frame is connections page, then load the variable containing the connections page frame
     elif current_page_frame == "connections_page_frame":
         page_frame = connections_page_frame
-    # if the current page frame is Profile page, then load the variable containing the Profile page frame
-    elif current_page_frame == "profile_page_frame":
-        page_frame = profile_page_frame
+    # if the current page frame is Account page, then load the variable containing the Account page frame
+    elif current_page_frame == "account_page_frame":
+        page_frame = account_page_frame
 
-    # create and place the Activities (homepage) button to the grid structure based on the current page's number of rows
-    activities_button = ctk.CTkButton(page_frame, text="☀️ Activities", text_color="#4F378B", fg_color="#fef7ff",
-                                      hover_color="#a193a3", width=10, command=home_page)
+    # ☀️create and place the Activities (homepage) button to the grid structure based on the current page's number of rows
+    activities_button = ctk.CTkButton(page_frame, text="Activities", text_color=standard_label_text_color, fg_color=box_color,
+                                      hover_color=box_hover_color, width=10, command=home_page, image=activities_taskbar_icon_outline, compound="top")
     activities_button.grid(row=number_of_rows, column=0, sticky=tk.NSEW)
 
     # create and place the Map button to the grid structure based on the current page's number of rows
-    map_button = ctk.CTkButton(page_frame, text="🗺️ Map", text_color="#4F378B", fg_color="#fef7ff",
-                               hover_color="#a193a3", width=10, command=map_page)
+    map_button = ctk.CTkButton(page_frame, text="Map", text_color=standard_label_text_color, fg_color=box_color,
+                               hover_color=box_hover_color, width=10, command=map_page, image=map_taskbar_icon_outline, compound="top")
     map_button.grid(row=number_of_rows, column=1, sticky=tk.NSEW)
 
     # create and place the Connections button to the grid structure based on the current page's number of rows
-    connections_button = ctk.CTkButton(page_frame, text="💬 Connections", text_color="#4F378B", fg_color="#fef7ff",
-                                       hover_color="#a193a3", width=10, command=connections_page)
+    connections_button = ctk.CTkButton(page_frame, text="Connections", text_color=standard_label_text_color, fg_color=box_color,
+                                       hover_color=box_hover_color, width=10, command=connections_page, image=connections_taskbar_icon_outline, compound="top")
     connections_button.grid(row=number_of_rows, column=2, sticky=tk.NSEW)
 
-    # create and place the Profile button to the grid structure based on the current page's number of rows
-    profile_button = ctk.CTkButton(page_frame, text="👤 Profile", text_color="#4F378B", fg_color="#fef7ff",
-                                   hover_color="#a193a3", width=10, command=profile_page)
-    profile_button.grid(row=number_of_rows, column=3, sticky=tk.NSEW)
+    # create and place the Account button to the grid structure based on the current page's number of rows
+    account_button = ctk.CTkButton(page_frame, text="Account", text_color=standard_label_text_color, fg_color=box_color,
+                                   hover_color=box_hover_color, width=10, command=account_page, image=account_taskbar_icon_outline, compound="top")
+    account_button.grid(row=number_of_rows, column=3, sticky=tk.NSEW)
 
     # if the current page is homepage
     if current_page_frame == "home_page_frame":
         # highlight the Activities button and disable the command to go to this page (redundant) and hover effects
-        activities_button.configure(fg_color="#e8def7", hover="disabled", command=None)
+        activities_button.configure(fg_color=box_selected_color, hover="disabled", command=None, image=activities_taskbar_icon)
     # if the current page is Map
     elif current_page_frame == "map_page_frame":
         # highlight the Map button and disable the command to go to this page (redundant) and hover effects
-        map_button.configure(fg_color="#e8def7", hover="disabled", command=None)
+        map_button.configure(fg_color=box_selected_color, hover="disabled", command=None, image=map_taskbar_icon)
     elif current_page_frame == "connections_page_frame":
         # highlight the Connections button and disable the command to go to this page (redundant) and hover effects
-        connections_button.configure(fg_color="#e8def7", hover="disabled", command=None)
-    elif current_page_frame == "profile_page_frame":
-        # highlight the Profile button and disable the command to go to this page (redundant) and hover effects
-        profile_button.configure(fg_color="#e8def7", hover="disabled", command=None)
+        connections_button.configure(fg_color=box_selected_color, hover="disabled", command=None, image=connections_taskbar_icon)
+    elif current_page_frame == "account_page_frame":
+        # highlight the Account button and disable the command to go to this page (redundant) and hover effects
+        account_button.configure(fg_color=box_selected_color, hover="disabled", command=None, image=account_taskbar_icon)
 
-# define a function which will update the user data after user changes them on the Profile page and saves changes
+# define a function which will update the user data after user changes them on the Account page and saves changes
 def update_settings():
     # check if the user inputted at least one information to change
     if (len(activity1_change_value.get()) == 0 and len(activity2_change_value.get()) == 0 and len(looking_for_change_value) == 0 and len(password_change_entry.get()) == 0):
@@ -114,8 +137,8 @@ def update_settings():
                 user_database.to_csv('data/users_data.csv')
                 # inform the user that changes were saved
                 tk.messagebox.showinfo("Success", "Your changes were saved.")
-                # reload the profile page with new settings
-                profile_page()
+                # reload the account page with new settings
+                account_page()
 
         # if the user did not change their second preferred activity
         if len(activity2_change_value.get()) == 0:
@@ -134,8 +157,8 @@ def update_settings():
                 user_database.to_csv('data/users_data.csv')
                 # inform the user that changes were saved
                 tk.messagebox.showinfo("Success", "Your changes were saved.")
-                # reload the profile page with new settings
-                profile_page()
+                # reload the account page with new settings
+                account_page()
 
         # if the user did not change their preference regarding individual/group
         if len(looking_for_change_value) == 0:
@@ -148,8 +171,8 @@ def update_settings():
             user_database.to_csv('data/users_data.csv')
             # inform the user that changes were saved
             tk.messagebox.showinfo("Success", "Your changes were saved.")
-            # reload the profile page with new settings
-            profile_page()
+            # reload the account page with new settings
+            account_page()
 
         # if the user did not change their password
         if len(password_change_entry.get()) == 0:
@@ -162,34 +185,34 @@ def update_settings():
             user_database.to_csv('data/users_data.csv')
             # inform the user that changes were saved
             tk.messagebox.showinfo("Success", "Your changes were saved.")
-            # reload the profile page with new settings
-            profile_page()
+            # reload the account page with new settings
+            account_page()
 
-# define the profile page
-def profile_page():
+# define the account page
+def account_page():
     # make the frame available for the function display the toolbar (toolbar)
-    global profile_page_frame, activity1_change_value, activity2_change_value, looking_for_change_value, password_change_entry, looking_for_change_checkbox_value
+    global account_page_frame, activity1_change_value, activity2_change_value, looking_for_change_value, password_change_entry, looking_for_change_checkbox_value
 
     # destroy previous widgets
     destroy_previous_widgets()
 
-    # create a frame for the home page
-    profile_page_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+    # create a frame for the account page
+    account_page_frame = ctk.CTkFrame(window, fg_color=background_color)
     # place the password confirmation page
-    profile_page_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
+    account_page_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
     # define the gird layout for the home page
     for i in range(20):
-        profile_page_frame.rowconfigure(i, weight=1)
+        account_page_frame.rowconfigure(i, weight=1)
     for i in range(4):
-        profile_page_frame.columnconfigure(i, weight=1)
+        account_page_frame.columnconfigure(i, weight=1)
 
     # display the toolbar by passing the home page_frame and same number of rows as defined in the grid structure
-    toolbar("profile_page_frame",20)
+    toolbar("account_page_frame",20)
 
     # define and place the heading to the grid
-    upper_bar = ctk.CTkLabel(profile_page_frame, text="👤 Your profile", fg_color="#fef7ff", text_color="#4F378B",
-                             font=("Roboto", 14), height=50)
+    upper_bar = ctk.CTkLabel(account_page_frame, text=" Your account", fg_color=box_color, text_color=standard_label_text_color,
+                             font=("Roboto", 14), height=50, image=account_taskbar_icon_outline, compound="left")
     upper_bar.grid(row=0, column=0, columnspan=4, sticky=tk.NSEW)
 
     # read the csv file with user data to show current settings in activities preferences and in looking for individual/group
@@ -198,19 +221,21 @@ def profile_page():
     user_database.set_index("username", inplace=True)
 
     # description explaining the page's functionality
-    profile_page_description = ctk.CTkLabel(profile_page_frame,
+    account_page_description = ctk.CTkLabel(account_page_frame,
                                             text="Here you can change your settings.\nOnly fill those fields you want to change\nand click Save changes.",
-                                            fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 14))
-    profile_page_description.grid(row=4, column=0, columnspan=4)
+                                            text_color=standard_label_text_color, fg_color=background_color,
+                                            font=("Roboto", 14))
+    account_page_description.grid(row=4, column=0, columnspan=4)
 
     # place label and dropdown for preferred activity 1
-    activity1_change_label = ctk.CTkLabel(profile_page_frame,
+    activity1_change_label = ctk.CTkLabel(account_page_frame,
                                    text=f"What is your new first preferred activity?\nCurrent activity: {user_database.loc[current_username, "activity1"]}",
-                                   fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                   text_color=standard_label_text_color, fg_color=background_color,
+                                          font=("Roboto", 12))
     activity1_change_label.grid(row=5, column=0, columnspan=4)
     # variable which will store the selection of activity 1
     activity1_change_value = tk.StringVar()
-    activity1_change_dropdown = ctk.CTkComboBox(profile_page_frame,
+    activity1_change_dropdown = ctk.CTkComboBox(account_page_frame,
                                          values=["Playing guitar", "Going to cinema", "Cooking", "Creative writing",
                                                  "Doing school work together", "Social dancing"],
                                          width=200, justify="center", font=("Roboto", 12), dropdown_font=("Roboto", 12),
@@ -218,13 +243,14 @@ def profile_page():
     activity1_change_dropdown.grid(row=6, column=0, columnspan=4)
 
     # place label and dropdown for preferred activity 2
-    activity2_change_label = ctk.CTkLabel(profile_page_frame,
+    activity2_change_label = ctk.CTkLabel(account_page_frame,
                                           text=f"What is your new second preferred activity?\nCurrent activity: {user_database.loc[current_username, "activity2"]}",
-                                          fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                          text_color=standard_label_text_color, fg_color=background_color,
+                                          font=("Roboto", 12))
     activity2_change_label.grid(row=7, column=0, columnspan=4)
     # variable which will store the selection of activity 2
     activity2_change_value = tk.StringVar()
-    activity2_change_dropdown = ctk.CTkComboBox(profile_page_frame,
+    activity2_change_dropdown = ctk.CTkComboBox(account_page_frame,
                                                 values=["Playing guitar", "Going to cinema", "Cooking",
                                                         "Creative writing",
                                                         "Doing school work together", "Social dancing"],
@@ -260,29 +286,31 @@ def profile_page():
     # if a user's current preference is another person
     if user_database.loc[current_username, "looking_for"] == "Another person":
         # place label and dropdown asking if the user is looking for a group of people now
-        looking_for_change_label = ctk.CTkLabel(profile_page_frame,
+        looking_for_change_label = ctk.CTkLabel(account_page_frame,
                                          text="Are you now looking for a group of people?",
-                                         fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                         text_color=standard_label_text_color, fg_color=background_color,
+                                                font=("Roboto", 12))
         looking_for_change_label.grid(row=9, column=0, columnspan=4)
         # variable which will store the value of the checkbox, the default value is unchecked
         looking_for_change_checkbox_value = ctk.StringVar(value="unchecked group")
         # checkbox for terms and conditions
-        checkbox_looking_for_group = ctk.CTkCheckBox(profile_page_frame, text="Yes, I am looking for a group now.",
+        checkbox_looking_for_group = ctk.CTkCheckBox(account_page_frame, text="Yes, I am looking for a group now.",
                                                      command=user_group_preference,
                                            variable=looking_for_change_checkbox_value, onvalue="checked group",
-                                           offvalue="unchecked group")
+                                           offvalue="unchecked group", fg_color="#4F378B", hover_color=standard_button_hover_color)
         checkbox_looking_for_group.grid(row=10, column=0, columnspan=4)
     # if a user's current preference is a group of people
     elif user_database.loc[current_username, "looking_for"] == "Group of people":
         # place label and dropdown asking if the user is looking for an individual now
-        looking_for_change_label = ctk.CTkLabel(profile_page_frame,
+        looking_for_change_label = ctk.CTkLabel(account_page_frame,
                                                 text="Are you now looking for another person?",
-                                                fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                                text_color=standard_label_text_color, fg_color=background_color,
+                                                font=("Roboto", 12))
         looking_for_change_label.grid(row=9, column=0, columnspan=4)
         # variable which will store the value of the checkbox, the default value is unchecked
         looking_for_change_checkbox_value = ctk.StringVar(value="unchecked individual")
         # checkbox for terms and conditions
-        checkbox_looking_for_individual = ctk.CTkCheckBox(profile_page_frame,
+        checkbox_looking_for_individual = ctk.CTkCheckBox(account_page_frame,
                                                      text="Yes, I am looking for another person now.",
                                                      variable=looking_for_change_checkbox_value, onvalue="checked individual",
                                                           command=user_group_preference,
@@ -290,25 +318,26 @@ def profile_page():
         checkbox_looking_for_individual.grid(row=10, column=0, columnspan=4)
 
         # place label and dropdown for password change
-    password_change_label = ctk.CTkLabel(profile_page_frame,
+    password_change_label = ctk.CTkLabel(account_page_frame,
                                             text="What should be your new password?",
-                                            fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                            text_color=standard_label_text_color, fg_color=background_color,
+                                         font=("Roboto", 12))
     password_change_label.grid(row=11, column=0, columnspan=4)
 
     # define a label which will store the user's password
     password_change_entry = tk.StringVar()
-    password_change_entry_box = ctk.CTkEntry(profile_page_frame, textvariable=password_change_entry, show="*",
+    password_change_entry_box = ctk.CTkEntry(account_page_frame, textvariable=password_change_entry, show="*",
                                       width=250)  # "show" will hide the characters
     password_change_entry_box.grid(row=12, column=0, columnspan=4)
 
     # save changes button
-    save_changes_button = ctk.CTkButton(profile_page_frame, text="Save changes", fg_color="#4F378B",
-                                        hover_color="#6945c4", command=update_settings)
+    save_changes_button = ctk.CTkButton(account_page_frame, text="Save changes", text_color=standard_button_text_color, fg_color=standard_button_color,
+                                        hover_color=standard_button_hover_color, command=update_settings)
     save_changes_button.grid(row=13, column=0, columnspan=4)
 
     # log out button
-    log_out_button = ctk.CTkButton(profile_page_frame, text="Log out", fg_color="#fef7ff", text_color="#4F378B",
-                                        hover_color="#a193a3", command=welcome_page)
+    log_out_button = ctk.CTkButton(account_page_frame, text="Log out", fg_color=box_color, text_color=standard_label_text_color,
+                                        hover_color=box_hover_color, command=welcome_page)
     log_out_button.grid(row=16, column=0, columnspan=4)
 
 # define a function for adding activity contact to Connections page
@@ -375,7 +404,7 @@ def connections_page():
     destroy_previous_widgets()
 
     # create a frame for the home page
-    connections_page_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+    connections_page_frame = ctk.CTkFrame(window, fg_color=background_color)
     # place the password confirmation page
     connections_page_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
@@ -389,8 +418,8 @@ def connections_page():
     toolbar("connections_page_frame",20)
 
     # define and place the heading to the grid
-    upper_bar = ctk.CTkLabel(connections_page_frame, text="💬 Your connections", fg_color="#fef7ff", text_color="#4F378B",
-                             font=("Roboto", 14), height=50)
+    upper_bar = ctk.CTkLabel(connections_page_frame, text=" Your connections", fg_color=box_color, text_color=standard_label_text_color,
+                             font=("Roboto", 14), height=50, image=connections_taskbar_icon_outline, compound="left")
     upper_bar.grid(row=0, column=0, columnspan=4, sticky=tk.NSEW)
 
     # read the csv file with user data
@@ -422,13 +451,13 @@ def connections_page():
         # place label for the contact
         activity1_label = ctk.CTkLabel(connections_page_frame,
                                          text=f"{activity1_name} with {activity1_people}\nContact: {activity1_contact}",
-                                         fg_color="#fef7ff", text_color="#4F378B", font=("Roboto", 14))
+                                         fg_color=box_color, text_color=standard_label_text_color, font=("Roboto", 14))
         activity1_label.grid(row=4, column=0, columnspan=4, sticky=tk.NSEW)
 
         # add a remove button from Connections page
-        remove_connection1_button = ctk.CTkButton(connections_page_frame, text="Remove connection", text_color="#4F378B",
-                                                 fg_color="#fef7ff",
-                                                 hover_color="#a193a3", width=10,
+        remove_connection1_button = ctk.CTkButton(connections_page_frame, text="Remove connection", text_color=standard_label_text_color,
+                                                 fg_color=box_color,
+                                                 hover_color=box_hover_color, width=10,
                                                  command=lambda: remove_connection(unique_activity_identifier_activity1,
                                                                                    "connections_page"))
         # use the place method to not influence the nicely formatted grid
@@ -448,14 +477,14 @@ def connections_page():
         # place label for the contact
         activity2_label = ctk.CTkLabel(connections_page_frame,
                                       text=f"{activity2_name} with {activity2_people}\nContact: {activity2_contact}",
-                                      fg_color="#fef7ff", text_color="#4F378B", font=("Roboto", 14))
+                                      fg_color=box_color, text_color=standard_label_text_color, font=("Roboto", 14))
         activity2_label.grid(row=7, column=0, columnspan=4, sticky=tk.NSEW)
 
         # add a remove button from Connections page
         remove_connection2_button = ctk.CTkButton(connections_page_frame, text="Remove connection",
-                                                 text_color="#4F378B",
-                                                 fg_color="#fef7ff",
-                                                 hover_color="#a193a3", width=10,
+                                                 text_color=standard_label_text_color,
+                                                 fg_color=box_color,
+                                                 hover_color=box_hover_color, width=10,
                                                  command=lambda: remove_connection(
                                                      unique_activity_identifier_activity2,
                                                      "connections_page"))
@@ -476,14 +505,14 @@ def connections_page():
         # place label for the contact
         activity3_label = ctk.CTkLabel(connections_page_frame,
                                        text=f"{activity3_name} with {activity3_people}\nContact: {activity3_contact}",
-                                       fg_color="#fef7ff", text_color="#4F378B", font=("Roboto", 14))
+                                       fg_color="#fef7ff", text_color=standard_label_text_color, font=("Roboto", 14))
         activity3_label.grid(row=10, column=0, columnspan=4, sticky=tk.NSEW)
 
         # add a remove button from Connections page
         remove_connection2_button = ctk.CTkButton(connections_page_frame, text="Remove connection",
-                                                  text_color="#4F378B",
+                                                  text_color=standard_label_text_color,
                                                   fg_color="#fef7ff",
-                                                  hover_color="#a193a3", width=10,
+                                                  hover_color=box_hover_color, width=10,
                                                   command=lambda: remove_connection(
                                                       unique_activity_identifier_activity3,
                                                       "connections_page"))
@@ -494,7 +523,8 @@ def connections_page():
         # place label saying there are not connection to display
         no_connections_label = ctk.CTkLabel(connections_page_frame,
                                       text="You have no connections to display.\nYou can add them in Activity details.",
-                                      fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                      text_color=standard_label_text_color, fg_color=background_color,
+                                            font=("Roboto", 12))
         no_connections_label.grid(row=3, column=0, columnspan=4, sticky=tk.NSEW)
 
 # define the map page
@@ -506,7 +536,7 @@ def map_page():
     destroy_previous_widgets()
 
     # create a frame for the home page
-    map_page_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+    map_page_frame = ctk.CTkFrame(window, fg_color=background_color)
     # place the password confirmation page
     map_page_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
@@ -520,8 +550,8 @@ def map_page():
     toolbar("map_page_frame",20)
 
     # define and place the heading to the grid
-    upper_bar = ctk.CTkLabel(map_page_frame, text="🗺️ Activities near you", fg_color="#fef7ff", text_color="#4F378B",
-                             font=("Roboto", 20), height=50)
+    upper_bar = ctk.CTkLabel(map_page_frame, text=" Activities near you", fg_color=box_color, text_color=standard_label_text_color,
+                             font=("Roboto", 20), height=50, image=map_taskbar_icon_outline, compound="left")
     upper_bar.grid(row=0, column=0, columnspan=4, sticky=tk.NSEW)
 
     # get user's IP location
@@ -568,7 +598,7 @@ def show_activity_details(unique_activity_identifier):
     destroy_previous_widgets()
 
     # create a frame for the activity details page
-    activity_details_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+    activity_details_frame = ctk.CTkFrame(window, fg_color=background_color)
     # place the frame for the activity details page
     activity_details_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
@@ -606,32 +636,36 @@ def show_activity_details(unique_activity_identifier):
 
     # define and place the heading to the grid
     upper_bar = ctk.CTkLabel(activity_details_frame, text=f"Details of {activity_name}\nwith {activity_people}", fg_color="#fef7ff",
-                             text_color="#4F378B",
+                             text_color=standard_label_text_color,
                              font=("Roboto", 16), height=50)
     upper_bar.grid(row=0, column=0, columnspan=4, sticky=tk.NSEW)
 
     # place label for description title
     description_title_label = ctk.CTkLabel(activity_details_frame,
                                   text="Description of the activity:",
-                                  fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 16))
+                                  text_color=standard_label_text_color, fg_color=background_color,
+                                           font=("Roboto", 16))
     description_title_label.grid(row=2, column=0, columnspan=4)
 
     # place label for description
     description_label = ctk.CTkLabel(activity_details_frame,
                                            text=activity_description,
-                                           fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 14), wraplength=320)
+                                           text_color=standard_label_text_color, fg_color=background_color,
+                                     font=("Roboto", 14), wraplength=320)
     description_label.grid(row=3, column=0, columnspan=4)
 
     # place label for contact title
     contact_title_label = ctk.CTkLabel(activity_details_frame,
                                            text="Contact:",
-                                           fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 16))
+                                           text_color=standard_label_text_color, fg_color=background_color,
+                                       font=("Roboto", 16))
     contact_title_label.grid(row=4, column=0, columnspan=4)
 
     # place label for contact
     contact_label = ctk.CTkLabel(activity_details_frame,
                                            text=activity_contact,
-                                           fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 14))
+                                           text_color=standard_label_text_color, fg_color=background_color,
+                                 font=("Roboto", 14))
     contact_label.grid(row=5, column=1, columnspan=2)
 
     # create map widget for activity location
@@ -646,23 +680,23 @@ def show_activity_details(unique_activity_identifier):
     # if the user already stored this activity's contact in the Connection page
     if unique_activity_identifier in current_user_connections:
         # add a remove button from Connections page
-        remove_connection_button = ctk.CTkButton(activity_details_frame, text="Remove connection", text_color="#4F378B", fg_color="#fef7ff",
-                                      hover_color="#a193a3", width=10, command=lambda:remove_connection(unique_activity_identifier,"show_activity_details"))
+        remove_connection_button = ctk.CTkButton(activity_details_frame, text="Remove connection", text_color=standard_label_text_color, fg_color="#fef7ff",
+                                      hover_color=box_hover_color, width=10, command=lambda:remove_connection(unique_activity_identifier,"show_activity_details"))
         # use the place method to not influence the nicely formatted grid
         remove_connection_button.grid(row=18, column=0, columnspan=4, sticky=tk.NSEW)
     # if the user has not stored this activity's contact on the Connection page
     else:
         # add an add button to Connections page
-        add_connection_button = ctk.CTkButton(activity_details_frame, text="Add connection", text_color="#4F378B",
+        add_connection_button = ctk.CTkButton(activity_details_frame, text="Add connection", text_color=standard_label_text_color,
                                                  fg_color="#fef7ff",
-                                                 hover_color="#a193a3", width=10,
+                                                 hover_color=box_hover_color, width=10,
                                                  command=lambda: add_connection(unique_activity_identifier))
         # use the place method to not influence the nicely formatted grid
         add_connection_button.grid(row=18, column=0, columnspan=4, sticky=tk.NSEW)
 
     # add a return button to activities page
-    return_button = ctk.CTkButton(activity_details_frame, text="⬅️", text_color="#4F378B", fg_color="#fef7ff",
-                                  hover_color="#a193a3", width=10, command=home_page)
+    return_button = ctk.CTkButton(activity_details_frame, text="⬅️", text_color=standard_label_text_color, fg_color=box_color,
+                                  hover_color=box_hover_color, width=10, command=home_page)
     # use the place method to not influence the nicely formatted grid
     return_button.place(x=10, y=10)
 
@@ -736,7 +770,7 @@ def add_activity_2(activity_type, activity_name, activity_description, individua
         destroy_previous_widgets()
 
         # create a frame for the home page
-        add_activity_2_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+        add_activity_2_frame = ctk.CTkFrame(window, fg_color=background_color)
         # place the password confirmation page
         add_activity_2_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
@@ -747,15 +781,16 @@ def add_activity_2(activity_type, activity_name, activity_description, individua
             add_activity_2_frame.columnconfigure(i, weight=1)
 
         # define and place the heading to the grid
-        upper_bar = ctk.CTkLabel(add_activity_2_frame, text="Add activity (2/2)", fg_color="#fef7ff",
-                                 text_color="#4F378B",
+        upper_bar = ctk.CTkLabel(add_activity_2_frame, text="Add activity (2/2)", fg_color=box_color,
+                                 text_color=standard_label_text_color,
                                  font=("Roboto", 14), height=50)
         upper_bar.grid(row=0, column=0, columnspan=4, sticky=tk.NSEW)
 
         # place label and entry box for name of organizers activity
         organizers_name_label = ctk.CTkLabel(add_activity_2_frame,
                                            text="What is your name\n(names if you are multiple people)",
-                                           fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                           text_color=standard_label_text_color, fg_color=background_color,
+                                             font=("Roboto", 12))
         organizers_name_label.grid(row=5, column=1, columnspan=2)
         # variable which will store organizer's names
         organizers_name_value = tk.StringVar()
@@ -765,7 +800,8 @@ def add_activity_2(activity_type, activity_name, activity_description, individua
         # place label and entry box for activity's latitude
         activity_latitude_label = ctk.CTkLabel(add_activity_2_frame,
                                              text="What is the latitude of this activity?",
-                                             fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                             text_color=standard_label_text_color, fg_color=background_color,
+                                               font=("Roboto", 12))
         activity_latitude_label.grid(row=7, column=1, columnspan=2)
         # variable which will store activity's latitude
         activity_latitude_value = tk.StringVar()
@@ -775,7 +811,8 @@ def add_activity_2(activity_type, activity_name, activity_description, individua
         # place label and entry box for activity's longitude
         activity_longitude_label = ctk.CTkLabel(add_activity_2_frame,
                                                text="What is the longitude of this activity?",
-                                               fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                               text_color=standard_label_text_color, fg_color=background_color,
+                                                font=("Roboto", 12))
         activity_longitude_label.grid(row=9, column=1, columnspan=2)
         # variable which will store activity's longitude
         activity_longitude_value = tk.StringVar()
@@ -785,7 +822,8 @@ def add_activity_2(activity_type, activity_name, activity_description, individua
         # place label and entry box for organizer's contact
         activity_contact_label = ctk.CTkLabel(add_activity_2_frame,
                                                 text="What is your phone number (international format)?",
-                                                fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                                text_color=standard_label_text_color, fg_color=background_color,
+                                              font=("Roboto", 12))
         activity_contact_label.grid(row=11, column=1, columnspan=2)
         # variable which will store activity's longitude
         activity_contact_value = tk.StringVar()
@@ -798,7 +836,7 @@ def add_activity_2(activity_type, activity_name, activity_description, individua
             # if terms and conditions have been checked
             if terms_and_conditions_checked.get() == "checked":
                 # show submit activity button
-                submit_activity_button = ctk.CTkButton(add_activity_2_frame, text="Submit activity", fg_color="#4F378B", hover_color="#6945c4",
+                submit_activity_button = ctk.CTkButton(add_activity_2_frame, text="Submit activity", text_color=standard_button_text_color, fg_color=standard_button_color, hover_color=standard_button_hover_color,
                                                        command=lambda: submit_activity(activity_type, activity_name,
                                                                                        activity_description, individual_group,
                                                                                        organizers_name_value.get(),
@@ -823,7 +861,7 @@ def add_activity():
     destroy_previous_widgets()
 
     # create a frame for the home page
-    add_activity_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+    add_activity_frame = ctk.CTkFrame(window, fg_color=background_color)
     # place the password confirmation page
     add_activity_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
@@ -834,15 +872,15 @@ def add_activity():
         add_activity_frame.columnconfigure(i, weight=1)
 
     # define and place the heading to the grid
-    upper_bar = ctk.CTkLabel(add_activity_frame, text="Add activity (1/2)", fg_color="#fef7ff",
-                             text_color="#4F378B",
+    upper_bar = ctk.CTkLabel(add_activity_frame, text="Add activity (1/2)", fg_color=box_color,
+                             text_color=standard_label_text_color,
                              font=("Roboto", 14), height=50)
     upper_bar.grid(row=0, column=0, columnspan=4, sticky=tk.NSEW)
 
     # place label and dropdown for type of added activity
     activity_type_label = ctk.CTkLabel(add_activity_frame,
-                                   text="What type is your activity?",
-                                   fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                   text="What type is your activity?", text_color=standard_label_text_color,
+                                       fg_color=background_color, font=("Roboto", 12))
     activity_type_label.grid(row=3, column=1, columnspan=2)
     # variable which will store the type of activity selected
     activity_type_value = tk.StringVar()
@@ -856,7 +894,8 @@ def add_activity():
     # place label and entry box for name of added activity
     activity_name_label = ctk.CTkLabel(add_activity_frame,
                                        text="What is the name of your activity?",
-                                       fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                       text_color=standard_label_text_color, fg_color=background_color,
+                                       font=("Roboto", 12))
     activity_name_label.grid(row=5, column=1, columnspan=2)
     # variable which will store the activity's name
     activity_name_value = tk.StringVar()
@@ -866,7 +905,8 @@ def add_activity():
     # place label and entry box for description of added activity
     activity_description_label = ctk.CTkLabel(add_activity_frame,
                                        text="Shortly describe your activity",
-                                       fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                       text_color=standard_label_text_color, fg_color=background_color,
+                                              font=("Roboto", 12))
     activity_description_label.grid(row=7, column=1, columnspan=2)
     # textbox which also stores the input
     activity_description_box = ctk.CTkTextbox(add_activity_frame)
@@ -875,7 +915,8 @@ def add_activity():
     # place label and dropdown for individual/group activity
     individual_group_label = ctk.CTkLabel(add_activity_frame,
                                      text="Are you an individual or a group",
-                                     fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                     text_color=standard_label_text_color, fg_color=background_color,
+                                          font=("Roboto", 12))
     individual_group_label.grid(row=9, column=1, columnspan=2)
     # variable which will store the selection of individual/group
     individual_group_value = tk.StringVar()
@@ -886,15 +927,15 @@ def add_activity():
     individual_group_dropdown.grid(row=10, column=1, columnspan=2)
 
     # continue button
-    continue_button = ctk.CTkButton(add_activity_frame, text="Continue", fg_color="#4F378B", hover_color="#6945c4",
+    continue_button = ctk.CTkButton(add_activity_frame, text="Continue", text_color=standard_button_text_color, fg_color=standard_button_color, hover_color=standard_button_hover_color,
                                   command=lambda: add_activity_2(activity_type_value.get(), activity_name_value.get(),
                                                                  activity_description_box.get(0.1, ctk.END),
                                                                  individual_group_value.get()))
     continue_button.grid(row=11, column=1, columnspan=2)
 
     # return button to home page
-    return_button = ctk.CTkButton(add_activity_frame, text="⬅️", text_color="#4F378B", fg_color="#fef7ff",
-                                 hover_color="#a193a3", width=10)
+    return_button = ctk.CTkButton(add_activity_frame, text="⬅️", text_color=standard_label_text_color, fg_color=box_color,
+                                 hover_color=box_hover_color, width=10, command=home_page)
     # use the place method to not influence the nicely formatted grid
     return_button.place(x=10, y=10)
 
@@ -970,10 +1011,10 @@ def display_closest_activity(activity_number):
         # display the activity closer to user, in this case the one with nearest latitude
         activity_label = ctk.CTkLabel(home_page_frame,
                                            text=f"{nearest_latitude.loc["activity_name"]}\nwith {nearest_latitude.loc["names"]}",
-                                           fg_color="#fef7ff", text_color="#4F378B", font=("Roboto", 18))
+                                           fg_color=box_color, text_color=standard_label_text_color, font=("Roboto", 18))
         # show more button
-        show_more_button = ctk.CTkButton(home_page_frame, text="Show more", fg_color="#4F378B",
-                                         hover_color="#6945c4", width=50, height=100, command=lambda:show_activity_details(unique_activity_identifier))
+        show_more_button = ctk.CTkButton(home_page_frame, text="Show more", text_color=standard_button_text_color, fg_color=standard_button_color,
+                                         hover_color=standard_button_hover_color, width=50, height=100, command=lambda:show_activity_details(unique_activity_identifier))
         # place label and button to the grid at the top because it is the first preferred activity
         if activity_number == "activity1":
             activity_label.grid(row=2, column=0, columnspan=3, sticky=tk.NSEW)
@@ -990,10 +1031,10 @@ def display_closest_activity(activity_number):
         # display the activity closer to user, in this case the one with nearest longitude
         activity_label = ctk.CTkLabel(home_page_frame,
                                        text=f"{nearest_longitude.loc["activity_name"]}\nwith {nearest_longitude.loc["names"]}",
-                                       fg_color="#fef7ff", text_color="#4F378B", font=("Roboto", 18))
+                                       fg_color=box_color, text_color=standard_label_text_color, font=("Roboto", 18))
         # show more button
-        show_more_button = ctk.CTkButton(home_page_frame, text="Show more", fg_color="#4F378B",
-                                         hover_color="#6945c4", width=50, command=lambda: show_activity_details(unique_activity_identifier))
+        show_more_button = ctk.CTkButton(home_page_frame, text="Show more", text_color=standard_button_text_color, fg_color=standard_button_color,
+                                         hover_color=standard_button_hover_color, width=50, command=lambda: show_activity_details(unique_activity_identifier))
         # place label and button to the grid at the top because it is the first preferred activity
         if activity_number == "activity1":
             activity_label.grid(row=2, column=0, columnspan=3, sticky=tk.NSEW)
@@ -1016,7 +1057,7 @@ def home_page():
     destroy_previous_widgets()
 
     # create a frame for the home page
-    home_page_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+    home_page_frame = ctk.CTkFrame(window, fg_color=background_color)
     # place the password confirmation page
     home_page_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
@@ -1030,8 +1071,8 @@ def home_page():
     toolbar("home_page_frame",20)
 
     # define and place the heading to the grid
-    upper_bar = ctk.CTkLabel(home_page_frame, text="☀️ Activities for you", fg_color="#fef7ff", text_color="#4F378B",
-                             font=("Roboto", 14), height=50)
+    upper_bar = ctk.CTkLabel(home_page_frame, text=" Activities for you", fg_color=box_color, text_color=standard_label_text_color,
+                             font=("Roboto", 14), height=50, image=activities_taskbar_icon_outline, compound="left")
     upper_bar.grid(row=0, column=0, columnspan=4, sticky=tk.NSEW)
 
     # place activity one based on the user's first preferred activity and the closest matching activity
@@ -1043,11 +1084,12 @@ def home_page():
     # place an information at the end of suggestions that this is the end
     end_of_suggestions_label = ctk.CTkLabel(home_page_frame,
                                   text="Those are all suggestions for now.",
-                                  fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                  text_color=standard_label_text_color, fg_color=background_color,
+                                            font=("Roboto", 12))
     end_of_suggestions_label.grid(row=5, column=0, columnspan=4, sticky=tk.NSEW)
 
     # create activity button
-    add_activity_button = ctk.CTkButton(home_page_frame, text="Create activity", fg_color="#4F378B", hover_color="#6945c4",
+    add_activity_button = ctk.CTkButton(home_page_frame, text="Create activity", text_color=standard_button_text_color, fg_color=standard_button_color, hover_color=standard_button_hover_color,
                                   command=add_activity)
     add_activity_button.grid(row=17, column=2, columnspan=2)
 
@@ -1057,7 +1099,7 @@ def submit_password():
     destroy_previous_widgets()
 
     # create a frame for the password confirmation page
-    password_confirmation_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+    password_confirmation_frame = ctk.CTkFrame(window, fg_color=background_color)
     # place the password confirmation page
     password_confirmation_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
@@ -1087,18 +1129,18 @@ def submit_password():
 
     # header welcoming user to the app home page
     before_home_page_header = ctk.CTkLabel(password_confirmation_frame, text=f"All set, {current_username}!", fg_color="#ded9e0",
-                                       text_color="#4F378B", font=("Roboto", 20))
+                                       text_color=standard_label_text_color, font=("Roboto", 20))
     before_home_page_header.grid(row=1, column=0)
 
     # description explaining the process
     before_home_page_description = ctk.CTkLabel(password_confirmation_frame,
                                        text="Click on the button to enter the home page\nand see activites suggestions for you!",
-                                       fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 14))
+                                       fg_color="#ded9e0", text_color=standard_label_text_color, font=("Roboto", 14))
     before_home_page_description.grid(row=2, column=0)
 
     # continue button
-    continue_button = ctk.CTkButton(password_confirmation_frame, text="Continue", fg_color="#4F378B",
-                                    hover_color="#6945c4", command=home_page)
+    continue_button = ctk.CTkButton(password_confirmation_frame, text="Continue", text_color=standard_button_text_color, fg_color=standard_button_color,
+                                    hover_color=standard_button_hover_color, command=home_page)
     continue_button.grid(row=3, column=0)
 
 
@@ -1110,7 +1152,7 @@ def create_password():
     destroy_previous_widgets()
 
     # create a frame for the password creation page
-    password_setup_page_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+    password_setup_page_frame = ctk.CTkFrame(window, fg_color=background_color)
     # place the password creation page to the window
     password_setup_page_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
@@ -1122,7 +1164,8 @@ def create_password():
     # description asking for password
     password_instruction = ctk.CTkLabel(password_setup_page_frame,
                                        text="Please create a password\nso you can log in again later.",
-                                       fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 14))
+                                       text_color=standard_label_text_color, fg_color=background_color,
+                                        font=("Roboto", 14))
     password_instruction.grid(row=3, column=0)
 
     # define a label which will store the user's password
@@ -1131,14 +1174,15 @@ def create_password():
     password_entry_box.grid(row=4, column=0)
 
     # submit button
-    submit_button = ctk.CTkButton(password_setup_page_frame, text="Submit", fg_color="#4F378B", hover_color="#6945c4",
+    submit_button = ctk.CTkButton(password_setup_page_frame, text="Submit", text_color=standard_button_text_color, fg_color=standard_button_color, hover_color=standard_button_hover_color,
                                   command=submit_password)
     submit_button.grid(row=5, column=0)
 
     # inform user that by continuing, their geolocation will be used
     location_info = ctk.CTkLabel(password_setup_page_frame,
                                         text="When you continue, your location\nwill be stored based on your IP address",
-                                        fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 14))
+                                        text_color=standard_label_text_color, fg_color=background_color,
+                                 font=("Roboto", 14))
     location_info.grid(row=6, column=0)
 
 # define a function for completing the registration form
@@ -1191,7 +1235,7 @@ def register_page():
     destroy_previous_widgets()
 
     # create a frame for the register page content
-    register_page_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+    register_page_frame = ctk.CTkFrame(window, fg_color=background_color)
     # place the questions page to the window
     register_page_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
@@ -1201,16 +1245,17 @@ def register_page():
     register_page_frame.columnconfigure(0, weight=1)
 
     # heading welcoming the user
-    welcome_page_header = ctk.CTkLabel(register_page_frame, text="Great to have you here!", fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 20))
+    welcome_page_header = ctk.CTkLabel(register_page_frame, text="Great to have you here!", text_color=standard_label_text_color, fg_color=background_color, font=("Roboto", 20))
     welcome_page_header.grid(row= 6, column= 0)
     # description explaining the process
-    welcome_page_description = ctk.CTkLabel(register_page_frame, text="To set up your profile,\nwe want to know more about you.", fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 14))
+    welcome_page_description = ctk.CTkLabel(register_page_frame, text="To set up your account,\nwe want to know more about you.", text_color=standard_label_text_color, fg_color=background_color, font=("Roboto", 14))
     welcome_page_description.grid(row= 7, column= 0)
 
     # place label and user input box for name
     name_label = ctk.CTkLabel(register_page_frame,
                                        text="Your full name:",
-                                       fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                       text_color=standard_label_text_color, fg_color=background_color,
+                              font=("Roboto", 12))
     name_label.grid(row=8, column=0)
     # define a label which will store the user's input and write it to the database (csv)
     name_entry = tk.StringVar()
@@ -1220,7 +1265,8 @@ def register_page():
     # place label and user input box for username
     username_label = ctk.CTkLabel(register_page_frame,
                                        text="Your username:",
-                                       fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                       text_color=standard_label_text_color, fg_color=background_color,
+                                  font=("Roboto", 12))
     username_label.grid(row=10, column=0)
     # define a label which will store the user's input and write it to the database (csv)
     username_entry = tk.StringVar()
@@ -1230,7 +1276,8 @@ def register_page():
     # place label and dropdown for status (German/newcomer)
     status_label = ctk.CTkLabel(register_page_frame,
                                   text="Your status:",
-                                  fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                  text_color=standard_label_text_color, fg_color=background_color,
+                                font=("Roboto", 12))
     status_label.grid(row=12, column=0)
     # variable which will store the selection of status
     status_value = tk.StringVar()
@@ -1242,7 +1289,8 @@ def register_page():
     # place label and dropdown for preferred activity 1
     activity1_label = ctk.CTkLabel(register_page_frame,
                                 text="What is your first preferred activity?",
-                                fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                text_color=standard_label_text_color, fg_color=background_color,
+                                   font=("Roboto", 12))
     activity1_label.grid(row=14, column=0)
     # variable which will store the selection of activity 1
     activity1_value = tk.StringVar()
@@ -1256,7 +1304,8 @@ def register_page():
     # place label and dropdown for preferred activity 2
     activity2_label = ctk.CTkLabel(register_page_frame,
                                 text="What is your second preferred activity?",
-                                fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                text_color=standard_label_text_color, fg_color=background_color,
+                                   font=("Roboto", 12))
     activity2_label.grid(row=16, column=0)
     # variable which will store the selection of activity 2
     activity2_value = tk.StringVar()
@@ -1270,7 +1319,8 @@ def register_page():
     # place label and dropdown for looking for individuals/group
     looking_for_label = ctk.CTkLabel(register_page_frame,
                                    text="Who are you looking for?",
-                                   fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                   text_color=standard_label_text_color, fg_color=background_color,
+                                     font=("Roboto", 12))
     looking_for_label.grid(row=18, column=0)
     # variable which will store the selection of activity 2
     looking_for_value = tk.StringVar()
@@ -1281,12 +1331,12 @@ def register_page():
     looking_for_dropdown.grid(row=19, column=0)
 
     # submit button
-    submit_button = ctk.CTkButton(register_page_frame, text="Submit", fg_color="#4F378B", hover_color="#6945c4", command=submit_data)
+    submit_button = ctk.CTkButton(register_page_frame, text="Submit", text_color=standard_button_text_color, fg_color=standard_button_color, hover_color=standard_button_hover_color, command=submit_data)
     submit_button.grid(row=21, column=0)
 
     # also add a return button to welcome page if one wants to log in instead of registration
-    return_button = ctk.CTkButton(register_page_frame, text="⬅️", text_color="#4F378B", fg_color="#fef7ff",
-                                  hover_color="#a193a3", width=10, command=welcome_page)
+    return_button = ctk.CTkButton(register_page_frame, text="⬅️", text_color=standard_label_text_color, fg_color=box_color,
+                                  hover_color=box_hover_color, width=10, command=welcome_page)
     # use the place method to not influence the nicely formatted grid
     return_button.place(x=10, y=10)
 
@@ -1323,7 +1373,7 @@ def login_page():
     destroy_previous_widgets()
 
     # create a frame for this page
-    login_page_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+    login_page_frame = ctk.CTkFrame(window, fg_color=background_color)
     # place frame to the window
     login_page_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
@@ -1333,20 +1383,22 @@ def login_page():
     login_page_frame.columnconfigure(0, weight=1)
 
     # header welcoming the user back
-    welcome_page_header = ctk.CTkLabel(login_page_frame, text="Welcome back!", fg_color="#ded9e0",
-                                       text_color="#4F378B", font=("Roboto", 20))
+    welcome_page_header = ctk.CTkLabel(login_page_frame, text="Welcome back!", text_color=standard_label_text_color,
+                                       fg_color=background_color, font=("Roboto", 20))
     welcome_page_header.grid(row=9, column=0)
 
     # place instructional label
     instructional_label = ctk.CTkLabel(login_page_frame,
                                    text="Enter your username and password to login.",
-                                   fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                   text_color=standard_label_text_color, fg_color=background_color,
+                                       font=("Roboto", 12))
     instructional_label.grid(row=10, column=0)
 
     # place label
     username_label = ctk.CTkLabel(login_page_frame,
                                   text="Your username:",
-                                  fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                  text_color=standard_label_text_color, fg_color=background_color,
+                                  font=("Roboto", 12))
     username_label.grid(row=11, column=0)
 
     # define a box for user's username and place it to the grid
@@ -1357,7 +1409,8 @@ def login_page():
     # place label
     password_label = ctk.CTkLabel(login_page_frame,
                                   text="Your password:",
-                                  fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 12))
+                                  text_color=standard_label_text_color, fg_color=background_color,
+                                  font=("Roboto", 12))
     password_label.grid(row=13, column=0)
 
     # define a label which will store the user's password
@@ -1366,12 +1419,12 @@ def login_page():
     password_login_entry_box.grid(row=14, column=0)
 
     # login button
-    login_button = ctk.CTkButton(login_page_frame, text="Submit", fg_color="#4F378B", hover_color="#6945c4", command=login)
+    login_button = ctk.CTkButton(login_page_frame, text="Submit", text_color=standard_button_text_color, fg_color=standard_button_color, hover_color=standard_button_hover_color, command=login)
     login_button.grid(row=15, column=0)
 
     # also add a return button to welcome page if one wants to register instead of login
-    return_button = ctk.CTkButton(login_page_frame, text="⬅️", text_color="#4F378B", fg_color="#fef7ff",
-                                  hover_color="#a193a3", width=10, command=welcome_page)
+    return_button = ctk.CTkButton(login_page_frame, text="⬅️", text_color=standard_label_text_color, fg_color=box_color,
+                                  hover_color=box_hover_color, width=10, command=welcome_page)
     # use the place method to not influence the nicely formatted grid
     return_button.place(x=10, y=10)
 
@@ -1381,7 +1434,7 @@ def welcome_page():
     destroy_previous_widgets()
 
     # create a frame for the welcome page content
-    welcome_page_frame = ctk.CTkFrame(window, fg_color="#ded9e0")
+    welcome_page_frame = ctk.CTkFrame(window, fg_color=background_color)
     # place the welcome page to the window
     welcome_page_frame.pack(fill="both", expand=1) # fill "both" means horizontally and vertically
 
@@ -1391,19 +1444,19 @@ def welcome_page():
     welcome_page_frame.columnconfigure(0, weight=1)
 
     # create a label with the sun icon
-    sun_icon_label = tk.Label(welcome_page_frame, image=sun_icon, background="#ded9e0")
+    sun_icon_label = ctk.CTkLabel(welcome_page_frame, image=sun_icon, fg_color=background_color, text=None)
     # place the icon using the grid method
     sun_icon_label.grid(row= 5, column= 0)
 
     # heading welcoming the user
-    welcome_page_header = ctk.CTkLabel(welcome_page_frame, text="Welcome to Activities!", fg_color="#ded9e0", text_color="#4F378B", font=("Roboto", 20))
+    welcome_page_header = ctk.CTkLabel(welcome_page_frame, text="Welcome to Activities!", text_color=standard_label_text_color, fg_color=background_color, font=("Roboto", 20))
     welcome_page_header.grid(row= 6, column= 0)
 
     # button for existing users
-    german_button = ctk.CTkButton(welcome_page_frame, text="Login", fg_color="#4F378B", hover_color="#6945c4", command=login_page)
+    german_button = ctk.CTkButton(welcome_page_frame, text="Login", text_color=standard_button_text_color, fg_color=standard_button_color, hover_color=standard_button_hover_color, command=login_page)
     german_button.grid(row= 8, column= 0)
     # button for new users
-    newcomer_button = ctk.CTkButton(welcome_page_frame, text="Register", fg_color="#4F378B", hover_color="#6945c4", command=register_page)
+    newcomer_button = ctk.CTkButton(welcome_page_frame, text="Register", text_color=standard_button_text_color, fg_color=standard_button_color, hover_color=standard_button_hover_color, command=register_page)
     newcomer_button.grid(row= 9, column= 0)
 
 welcome_page()

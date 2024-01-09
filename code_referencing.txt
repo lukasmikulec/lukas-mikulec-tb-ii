@@ -46,3 +46,6 @@ https://www.geeksforgeeks.org/remove-widgets-from-grid-in-tkinter/
 
 How to wrap tkinter label text:
 https://stackoverflow.com/questions/11949391/how-do-i-use-tkinter-to-create-line-wrapped-text-that-fills-the-width-of-the-win#:~:text=The%20Tkinter%20Label%20widget%20does,LEFT%20%2C%20RIGHT%20%2C%20or%20CENTER%20.
+
+How to import custom font:
+https://github.com/TomSchimansky/CustomTkinter/discussions/936
