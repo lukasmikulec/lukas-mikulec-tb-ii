@@ -22,10 +22,11 @@ window.geometry(f"{width}x{height}")
 # set the gui minimum window size
 window.minsize(width,height)
 
-ctk.set_appearance_mode("light")
+ctk.set_appearance_mode("dark")
 
 # define pathways for images used within functions (must be defined outside of functions to be displayed)
 sun_icon = ctk.CTkImage(light_image=Image.open("images/sun_outline.png"),dark_image=Image.open("images/sun_outline_dark.png"), size=(50, 50))
+plus_icon = ctk.CTkImage(light_image=Image.open("images/plus.png"),dark_image=Image.open("images/plus_dark.png"), size=(20, 20))
 
 activities_taskbar_icon_outline = ctk.CTkImage(light_image=Image.open("images/sun_outline.png"),dark_image=Image.open("images/sun_outline_dark.png"), size=(20, 20))
 activities_taskbar_icon = ctk.CTkImage(light_image=Image.open("images/sun.png"),dark_image=Image.open("images/sun_dark.png"), size=(20, 20))
@@ -1090,7 +1091,7 @@ def home_page():
 
     # create activity button
     add_activity_button = ctk.CTkButton(home_page_frame, text="Create activity", text_color=standard_button_text_color, fg_color=standard_button_color, hover_color=standard_button_hover_color,
-                                  command=add_activity)
+                                  command=add_activity, image=plus_icon, compound="left", height=20)
     add_activity_button.grid(row=17, column=2, columnspan=2)
 
 # define the page which will show before the home page after setting the password and which will add the user's password to the database
