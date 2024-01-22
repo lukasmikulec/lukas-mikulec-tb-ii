@@ -60,3 +60,6 @@ Cinema image: <a href="https://www.freepik.com/free-vector/back-view-people-movi
 Cooking image: <a href="https://www.freepik.com/free-vector/collection-people-cooking-their-favourite-food_8247920.htm#page=2&query=cooking&position=28&from_view=search&track=sph&uuid=befce5c8-6987-4976-94bc-efc47029ab66">Image by pikisuperstar</a> on Freepik
 Creative writing: <a href="https://www.freepik.com/free-vector/tiny-creative-people-writing-poems-typewriter-persons-reading-antique-books-feather-ink-bottle-flat-vector-illustration-literature-poetry-concept-banner-website-design-landing-page_24644938.htm#query=writing%20workshop&position=2&from_view=search&track=ais&uuid=594c2f5a-0fff-4446-98b5-1528339bc8d4">Image by pch.vector</a> on Freepik
 Doing school work: <a href="https://www.freepik.com/free-vector/business-people-looking-book_5949657.htm#query=homework&position=13&from_view=search&track=sph&uuid=2f4d251a-068f-4cbe-b92a-0d9d3223c5a0">Image by pikisuperstar</a> on Freepik
+
+How to open a URL from Python:
+https://www.youtube.com/watch?v=JNdP_BpOAU8
