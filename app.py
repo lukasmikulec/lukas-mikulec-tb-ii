@@ -15,6 +15,9 @@ window = ctk.CTk()
 # name the GUI window
 window.title("Activities 2.0")
 
+# define the icon for the app
+window.iconbitmap('images/app_icon.ico')
+
 # define the width and height of the app
 width, height = 350, 650
 
