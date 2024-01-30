@@ -63,3 +63,5 @@ Doing school work: <a href="https://www.freepik.com/free-vector/business-people-
 
 How to open a URL from Python:
 https://www.youtube.com/watch?v=JNdP_BpOAU8
+
+The is in method: Google Bard

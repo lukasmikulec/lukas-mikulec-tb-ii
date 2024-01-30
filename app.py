@@ -48,6 +48,8 @@ arrow_left_icon = ctk.CTkImage(light_image=Image.open("images/arrow_left.png"),
                                dark_image=Image.open("images/arrow_left_dark.png"), size=(16, 16))
 bin_icon = ctk.CTkImage(light_image=Image.open("images/delete.png"),
                         dark_image=Image.open("images/delete_dark.png"), size=(16, 16))
+tick_icon = ctk.CTkImage(light_image=Image.open("images/tick.png"),
+                        dark_image=Image.open("images/tick_dark.png"), size=(16, 16))
 whatsapp_icon = ctk.CTkImage(Image.open("images/whatsapp.png"), size=(25, 25))
 
 guitar_icon = tk.PhotoImage(file="images/guitar.png")
@@ -135,7 +137,7 @@ def bottom_navigation_bar(current_page_frame, number_of_rows):
                                image=map_taskbar_icon_outline,
                                fg_color=box_color,
                                hover_color=box_hover_color,
-                               command=map_page,
+                               command=map_page_nearby_activities,
                                width=10,
                                compound="top")
     map_button.grid(row=number_of_rows, column=1, sticky=tk.NSEW)
@@ -649,11 +651,17 @@ def add_connection(unique_activity_identifier, source_page):
         # if the user clicked on an add connection button on Activity details page coming from home, reload that page
         if source_page == "show_activity_details_home":
             # reload the activity details page to update the add/remove connection button
-            show_activity_details(unique_activity_identifier, "home page")
-        # if the user clicked on an add connection button on Activity details page coming from map, reload that page
-        elif source_page == "show_activity_details_map":
+            show_activity_details(unique_activity_identifier, "home_page")
+        # if the user clicked on an add connection button on Activity details page coming from map nearby activities,
+        # reload that page
+        elif source_page == "show_activity_details_map_nearby_activities":
             # reload the activity details page to update the add/remove connection button
-            show_activity_details(unique_activity_identifier, "map page")
+            show_activity_details(unique_activity_identifier, "map_page_nearby_activities")
+        # if the user clicked on an add connection button on Activity details page coming from map all activities,
+        # reload that page
+        elif source_page == "show_activity_details_map_all_activities":
+            # reload the activity details page to update the add/remove connection button
+            show_activity_details(unique_activity_identifier, "map_page_all_activities")
 
 # define a function for removing activity contact from Connections page
 def remove_connection(unique_activity_identifier, source_page, activity_name, activity_people):
@@ -685,11 +693,17 @@ def remove_connection(unique_activity_identifier, source_page, activity_name, ac
         # if the user clicked on a remove connection button on Activity details page coming from home, reload that page
         if source_page == "show_activity_details_home":
             # reload the activity details page to update the add/remove connection button
-            show_activity_details(unique_activity_identifier, "home page")
-        # if the user clicked on a remove connection button on Activity details page coming from map, reload that page
-        elif source_page == "show_activity_details_map":
+            show_activity_details(unique_activity_identifier, "home_page")
+        # if the user clicked on a remove connection button on Activity details page coming from map nearby activities,
+        # reload that page
+        elif source_page == "show_activity_details_map_nearby_activities":
             # reload the activity details page to update the add/remove connection button
-            show_activity_details(unique_activity_identifier, "map page")
+            show_activity_details(unique_activity_identifier, "map_page_nearby_activities")
+        # if the user clicked on a remove connection button on Activity details page coming from map all activities,
+        # reload that page
+        elif source_page == "show_activity_details_map_all_activities":
+            # reload the activity details page to update the add/remove connection button
+            show_activity_details(unique_activity_identifier, "map_page_all_activities")
         # if the user clicked on a remove button on Connection page
         else:
             # reload Connections page
@@ -891,28 +905,89 @@ def connections_page():
                                             fg_color=background_color)
         no_connections_label.grid(row=3, column=0, columnspan=4, sticky=tk.NSEW)
 
-# define a command which will get the unique activity identifier from the marker after the marker is clicked and which
-# will run the show_activity_details function
+# define a command which will get the unique activity identifier and source page from the marker after the marker
+# is clicked and which will run the show_activity_details function
 def show_activity_details_from_the_map(marker):
-    # pass the data attribute value of the marker (which contains unique activity identifier) to display activity details
-    show_activity_details(marker.data,"map page")
+    # pass the data attribute value of the marker (which contains unique activity identifier and source page)
+    # to display activity details
+    show_activity_details(marker.data[0],marker.data[1])
 
-# define the Map page
-def map_page():
+# define a function which will create a map marker of an activity
+def show_activity_marker(unique_activity_identifier):
+    # read the csv file with activity data
+    activities_database = pd.read_csv("data/activities_data.csv")
+    # set unique activity identifiers as the index
+    activities_database.set_index("unique_activity_identifier", inplace=True)
+
+    # based on unique activity identifier passed to the function, get the activity's name
+    activity_name = activities_database.loc[unique_activity_identifier, "activity_name"]
+    # based on unique activity identifier passed to the function, get the activity's people
+    activity_people = activities_database.loc[unique_activity_identifier, "names"]
+    # based on unique activity identifier passed to the function, get the activity's latitude
+    activity_latitude = activities_database.loc[unique_activity_identifier, "latitude"]
+    # based on unique activity identifier passed to the function, get the activity's longitude
+    activity_longitude = activities_database.loc[unique_activity_identifier, "longitude"]
+    # based on unique activity identifier passed to the function, get the activity's type
+    activity_activity_type = activities_database.loc[unique_activity_identifier, "activity_type"]
+
+    # select the right icon for the marker
+
+    # if the activity type is Playing guitar
+    if activity_activity_type == "Playing guitar":
+        # select the guitar icon for the activity icon
+        activity_icon = guitar_icon
+    # if the activity type is Going to cinema
+    elif activity_activity_type == "Going to cinema":
+        # select the cinema icon for the activity icon
+        activity_icon = cinema_icon
+    # if the activity type is Cooking
+    elif activity_activity_type == "Cooking":
+        # select the cooking icon for the activity icon
+        activity_icon = cooking_icon
+    # if the activity type is Creative writing
+    elif activity_activity_type == "Creative writing":
+        # select the writing icon for the activity icon
+        activity_icon = writing_icon
+    # if the activity type is Doing school work together
+    elif activity_activity_type == "Doing school work together":
+        # select the homework icon for the activity icon
+        activity_icon = homework_icon
+    # if the activity type is Social dancing
+    else:
+        # select the dance icon for the activity icon
+        activity_icon = dance_icon
+
+    # set the activity marker
+    activity_marker = map_all_activities_widget.set_marker(activity_latitude,
+                                                           activity_longitude,
+                                                           text=f"{activity_name} with {activity_people}",
+                                                           text_color="navy",
+                                                           font=heading_4_medium,
+                                                           icon=activity_icon,
+                                                           # this will store the unique activity identifier and source
+                                                           # page so once the marker is clicked, data attribute can be
+                                                           # used to get the activity identifier and source page in the
+                                                           # function defined in the command parameter
+                                                           data=[unique_activity_identifier,"map_page_all_activities"],
+                                                           command=show_activity_details_from_the_map)
+
+
+# define the Map page, section of all activities
+def map_page_all_activities():
     # make the frame available for the function bottom_navigation_bar
     # (to display the bottom navigation bar on this page)
-    # make the activity icons available to the map widget
-    global map_page_frame, activity1_icon, activity2_icon
+    # make the map widget globally available so map markers can be defined in the show_activity_marker function
+    global map_page_frame, map_all_activities_widget
 
     # destroy previous widgets
     destroy_previous_widgets()
 
-    # create a frame for the Map page
+    # create a frame for the Map page, section all activities
     map_page_frame = ctk.CTkFrame(window, fg_color=background_color)
-    # place the Map page to the window
+    # place the Map page, section all activities to the window
     map_page_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
-    # define the grid layout for the Map page
+    # define the grid layout for the Map page, section all activities
     for i in range(20):
         map_page_frame.rowconfigure(i, weight=1)
     for i in range(4):
@@ -924,7 +999,114 @@ def map_page():
 
     # define and place the heading to the grid
     upper_bar = ctk.CTkLabel(map_page_frame,
-                             text=" Activities near you",
+                             text=" Map of activities",
+                             text_color=standard_label_text_color,
+                             font=heading_4,
+                             image=map_taskbar_icon_outline,
+                             fg_color=box_color,
+                             height=50,
+                             compound="left")
+    upper_bar.grid(row=0, column=0, columnspan=4, sticky=tk.NSEW)
+
+    # get user's IP location
+    user_location = geocoder.ip("me")
+
+    # read the csv file with user data
+    user_database = pd.read_csv("data/users_data.csv")
+    # set usernames as the index
+    user_database.set_index("username", inplace=True)
+    # load the current activity1 preference of the user
+    activity1_preference = user_database.loc[current_username, "activity1"]
+    # load the current activity2 preference of the user
+    activity2_preference = user_database.loc[current_username, "activity2"]
+    # load the status of the user
+    user_status = user_database.loc[current_username, "status"]
+    # load the group/individual preference of the user
+    group_preference = user_database.loc[current_username, "looking_for"]
+
+    # read the csv file with activities data
+    activities_database = pd.read_csv("data/activities_data.csv")
+    # select only those activity types which the user selected for their first and second activity preference
+    selected_activities = activities_database.loc[activities_database['activity_type'].isin([activity1_preference, activity2_preference])]
+    # further select only that individual/group activity type which the user selected
+    selected_activities = selected_activities.loc[selected_activities["group_activity"] == group_preference]
+    # if the user is non-German
+    if user_status == "I came to Germany":
+        # further select only German organizers (the purpose of the app is connecting Germans with non-Germans)
+        selected_activities = selected_activities.loc[selected_activities["organizers_status"] == "German"]
+    # if the user is German
+    else:
+        # further select only non-German organizers (the purpose of the app is connecting non-Germans with Germans)
+        selected_activities = selected_activities.loc[selected_activities["organizers_status"] == "Non-German"]
+
+    # create a new index after selecting only some rows from the original dataframe and delete the old index
+    selected_activities = selected_activities.reset_index(drop=True)
+
+    # create map widget
+    map_all_activities_widget = tkmap.TkinterMapView(map_page_frame, width=350, height=600, corner_radius=0)
+    # set map widget to the user's location
+    map_all_activities_widget.set_position(user_location.lat, user_location.lng)
+    # set map zoom
+    map_all_activities_widget.set_zoom(8)
+
+    # for as many activities as there are within the user's preferences
+    for i in range(len(selected_activities)):
+        # take the unique activity identifier of an activity and store it
+        unique_activity_identifier = selected_activities.loc[i, "unique_activity_identifier"]
+        # then pass it to a function which will generate the map marker for the activity
+        show_activity_marker(unique_activity_identifier)
+
+    # place the map widget to the grid
+    map_all_activities_widget.grid(row=1, column=0, rowspan=15, columnspan=4, sticky=tk.NSEW)
+
+    # nearby activities on a map button
+    nearby_activities_map_button = ctk.CTkButton(map_page_frame,
+                                               text="Only activities nearby",
+                                               text_color=standard_label_text_color,
+                                               fg_color=box_color,
+                                               hover_color=box_hover_color,
+                                               command=map_page_nearby_activities)
+    nearby_activities_map_button.grid(row=16, column=0, columnspan=2, sticky=tk.NSEW)
+
+    # all activities on a map button
+    all_activities_map_button = ctk.CTkButton(map_page_frame,
+                                              text="All activities",
+                                              text_color=standard_label_text_color,
+                                              image=tick_icon,
+                                              fg_color=box_selected_color,
+                                              hover_color=box_hover_color,
+                                              hover="disabled",
+                                              command=None)
+    all_activities_map_button.grid(row=16, column=2, columnspan=2, sticky=tk.NSEW)
+
+# define the Map page, section of nearby activities
+def map_page_nearby_activities():
+    # make the frame available for the function bottom_navigation_bar
+    # (to display the bottom navigation bar on this page)
+    # make the activity icons available to the map widget
+    global map_page_frame, activity1_icon, activity2_icon
+
+    # destroy previous widgets
+    destroy_previous_widgets()
+
+    # create a frame for the Map page, section of nearby activities
+    map_page_frame = ctk.CTkFrame(window, fg_color=background_color)
+    # place the Map page, section of nearby activities to the window
+    map_page_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
+
+    # define the grid layout for the Map page, section of nearby activities
+    for i in range(20):
+        map_page_frame.rowconfigure(i, weight=1)
+    for i in range(4):
+        map_page_frame.columnconfigure(i, weight=1)
+
+    # display the bottom navigation bar by passing the Map page frame
+    # and same number of rows as defined in the grid structure
+    bottom_navigation_bar("map_page_frame",20)
+
+    # define and place the heading to the grid
+    upper_bar = ctk.CTkLabel(map_page_frame,
+                             text=" Map of activities",
                              text_color=standard_label_text_color,
                              font=heading_4,
                              image=map_taskbar_icon_outline,
@@ -1016,36 +1198,58 @@ def map_page():
         activity2_icon = dance_icon
 
     # create map widget
-    map_widget = tkmap.TkinterMapView(map_page_frame, width=350, height=600, corner_radius=0)
+    map_nearby_activities_widget = tkmap.TkinterMapView(map_page_frame, width=350, height=600, corner_radius=0)
     # set map widget to the user's location
-    map_widget.set_position(user_location.lat, user_location.lng)
+    map_nearby_activities_widget.set_position(user_location.lat, user_location.lng)
     # set activities markers
-    activity1_marker = map_widget.set_marker(activity1_latitude,
-                                             activity1_longitude,
-                                             text=f"{activity1_name} with {activity1_people}",
-                                             text_color="navy",
-                                             font=heading_4_medium,
-                                             icon=activity1_icon,
-                                             # this will store the unique activity identifier so once the marker is clicked,
-                                             # data attribute can be used to get the activity identifier in the function
-                                             # defined in the command parameter
-                                             data=activity1_identifier,
-                                             command=show_activity_details_from_the_map)
-    activity2_marker = map_widget.set_marker(activity2_latitude,
-                                             activity2_longitude,
-                                             text=f"{activity2_name} with {activity2_people}",
-                                             text_color="navy",
-                                             font=heading_4_medium,
-                                             icon=activity2_icon,
-                                             # this will store the unique activity identifier so once the marker is clicked,
-                                             # data attribute can be used to get the activity identifier in the function
-                                             # defined in the command parameter
-                                             data=activity2_identifier,
-                                             command=show_activity_details_from_the_map)
+    activity1_marker = map_nearby_activities_widget.set_marker(activity1_latitude,
+                                                               activity1_longitude,
+                                                               text=f"{activity1_name} with {activity1_people}",
+                                                               text_color="navy",
+                                                               font=heading_4_medium,
+                                                               icon=activity1_icon,
+                                                               # this will store the unique activity identifier and source
+                                                               # page so once the marker is clicked, data attribute can be
+                                                               # used to get the activity identifier and source page in the
+                                                               # function defined in the command parameter
+                                                               data=[activity1_identifier,"map_page_nearby_activities"],
+                                                               command=show_activity_details_from_the_map)
+    activity2_marker = map_nearby_activities_widget.set_marker(activity2_latitude,
+                                                               activity2_longitude,
+                                                               text=f"{activity2_name} with {activity2_people}",
+                                                               text_color="navy",
+                                                               font=heading_4_medium,
+                                                               icon=activity2_icon,
+                                                               # this will store the unique activity identifier and source
+                                                               # page so once the marker is clicked, data attribute can be
+                                                               # used to get the activity identifier and source page in the
+                                                               # function defined in the command parameter
+                                                               data=[activity2_identifier,"map_page_nearby_activities"],
+                                                               command=show_activity_details_from_the_map)
     # set map zoom
-    map_widget.set_zoom(8)
+    map_nearby_activities_widget.set_zoom(8)
     # place the map widget to the grid
-    map_widget.grid(row=1, column=0, rowspan=15, columnspan=4, sticky=tk.NSEW)
+    map_nearby_activities_widget.grid(row=1, column=0, rowspan=15, columnspan=4, sticky=tk.NSEW)
+
+    # nearby activities on a map button
+    nearby_activities_map_button = ctk.CTkButton(map_page_frame,
+                                                 text="Only activities nearby",
+                                                 text_color=standard_label_text_color,
+                                                 image=tick_icon,
+                                                 fg_color=box_selected_color,
+                                                 hover_color=box_hover_color,
+                                                 hover="disabled",
+                                                 command=None)
+    nearby_activities_map_button.grid(row=16, column=0, columnspan=2, sticky=tk.NSEW)
+
+    # all activities on a map button
+    all_activities_map_button = ctk.CTkButton(map_page_frame,
+                                              text="All activities",
+                                              text_color=standard_label_text_color,
+                                              fg_color=box_color,
+                                              hover_color=box_hover_color,
+                                              command=map_page_all_activities)
+    all_activities_map_button.grid(row=16, column=2, columnspan=2, sticky=tk.NSEW)
 
 # define a function which will show the details of an activity
 def show_activity_details(unique_activity_identifier, source):
@@ -1092,19 +1296,28 @@ def show_activity_details(unique_activity_identifier, source):
     current_user_connections = eval(current_user_connections)
 
     # if the user got to the activity details page from the home page
-    if source == "home page":
+    if source == "home_page":
         # set the command which the return button will execute after being clicked to the one which loads the home page
         return_to = home_page
         # set the source page to the home page version so when a user deletes a connection, it will reload the version
         # in which the back button goes to home page
         source_page = "show_activity_details_home"
-    # if the user got to the activity details page from the map page
+    # if the user got to the activity details page from the map page, nearby activities section
+    elif source == "map_page_nearby_activities":
+        # set the command which the return button will execute after being clicked to the one
+        # which loads the map page, nearby activities section
+        return_to = map_page_nearby_activities
+        # set the source page to the map page nearby activities version so when a user deletes a connection,
+        # it will reload the version in which the back button goes to map page nearby activities
+        source_page = "show_activity_details_map_nearby_activities"
+    # if the user got to the activity details page from the map page, all activities section
     else:
-        # set the command which the return button will execute after being clicked to the one which loads the map page
-        return_to = map_page
-        # set the source page to the map page version so when a user deletes a connection, it will reload the version
-        # in which the back button goes to map page
-        source_page = "show_activity_details_map"
+        # set the command which the return button will execute after being clicked to the one
+        # which loads the map page, all activities section
+        return_to = map_page_all_activities
+        # set the source page to the map page all activities version so when a user deletes a connection,
+        # it will reload the version in which the back button goes to map page all activities
+        source_page = "show_activity_details_map_all_activities"
 
     # return button (left arrow)
     return_button = ctk.CTkButton(activity_details_frame,
@@ -1677,7 +1890,7 @@ def display_closest_activity(activity_type_preference_number):
                                      text_color=standard_button_text_color,
                                      fg_color=standard_button_color,
                                      hover_color=standard_button_hover_color,
-                                     command=lambda:show_activity_details(unique_activity_identifier, "home page"),
+                                     command=lambda:show_activity_details(unique_activity_identifier, "home_page"),
                                      width=50,
                                      anchor="w")
 
