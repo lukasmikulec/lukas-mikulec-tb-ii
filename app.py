@@ -3,7 +3,6 @@ import tkinter as tk # for creating the gui window
 import customtkinter as ctk # for upgrading the gui design to a modern look
 import pandas as pd # for storing user data in dataframes
 from tkinter import messagebox # for displaying desktop messages
-from tkinter import ttk # for creating a separator
 import tkintermapview as tkmap # for map display
 import geocoder # to get the user location based on user IP address for the map widget
 from datetime import datetime # for generating unique activity identifiers when creating new activities
