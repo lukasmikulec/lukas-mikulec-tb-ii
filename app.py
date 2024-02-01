@@ -3,6 +3,7 @@ import tkinter as tk # for creating the gui window
 import customtkinter as ctk # for upgrading the gui design to a modern look
 import pandas as pd # for storing user data in dataframes
 from tkinter import messagebox # for displaying desktop messages
+from tkinter import ttk # for creating a separator
 import tkintermapview as tkmap # for map display
 import geocoder # to get the user location based on user IP address for the map widget
 from datetime import datetime # for generating unique activity identifiers when creating new activities
@@ -275,7 +276,9 @@ def settings_page_app():
             # set the appearance mode to light mode
             ctk.set_appearance_mode("light")
 
+    # load the current user setting regarding the light/dark mode to display the toggle the way the mode is currently set
     switch_dark_mode_variable = ctk.StringVar(value=user_database.loc[current_username, "dark_mode"])
+    # define the toggle and place it to the grid
     switch_dark_mode_toggle = ctk.CTkSwitch(settings_page_frame,
                                             text="Dark mode",
                                             progress_color=standard_button_color,
@@ -283,7 +286,70 @@ def settings_page_app():
                                             onvalue="Yes",
                                             offvalue="No",
                                             command=switch_dark_mode)
-    switch_dark_mode_toggle.grid(row=4, column=1, columnspan=2)
+    switch_dark_mode_toggle.grid(row=5, column=1, columnspan=2)
+
+    # create a canvas widget which will serve as a separator and place it to the grid
+    canvas = tk.Canvas(settings_page_frame, bg="navyblue", highlightthickness=0, width=3000, height=2)
+    canvas.grid(row=8, column=0, columnspan=4)
+
+    # place label with heading "About the app"
+    about_the_app_heading_label = ctk.CTkLabel(settings_page_frame,
+                                               text="About the app",
+                                               text_color=standard_label_text_color,
+                                               font=heading_4_medium,
+                                               fg_color=background_color)
+    about_the_app_heading_label.grid(row=10, column=0, columnspan=4, sticky=tk.S, padx=20)
+
+    # place label with about the app text
+    about_the_app_heading_text_label = ctk.CTkLabel(settings_page_frame,
+                                                    text="Activities connect Germans and immigrants through "
+                                                         "common activities to help the integration process.",
+                                                    text_color=standard_label_text_color,
+                                                    font=normal_text,
+                                                    wraplength=330,
+                                                    fg_color=background_color)
+    about_the_app_heading_text_label.grid(row=11, column=0, columnspan=4, sticky=tk.N, padx=20)
+
+    # place label with heading "Creator contact, app details, and code"
+    creator_app_details_code_heading_label = ctk.CTkLabel(settings_page_frame,
+                                                          text="Creator contact, app details, and code",
+                                                          text_color=standard_label_text_color,
+                                                          font=heading_4_medium,
+                                                          fg_color=background_color)
+    creator_app_details_code_heading_label.grid(row=12, column=0, columnspan=4, sticky=tk.S, padx=20)
+
+    # place label with the creator contact, app details, and code on GitHub text
+    creator_app_details_code_text_label = ctk.CTkLabel(settings_page_frame,
+                                                       text="Lukas Mikulec"
+                                                            " (https://github.com/lukasmikulec/lukas-mikulec-tb-ii)",
+                                                       text_color=standard_label_text_color,
+                                                       font=normal_text,
+                                                       wraplength=330,
+                                                       fg_color=background_color)
+    creator_app_details_code_text_label.grid(row=13, column=0, columnspan=4, sticky=tk.N, padx=20)
+
+    # place label with heading "Image attribution"
+    image_attribution_heading_label = ctk.CTkLabel(settings_page_frame,
+                                                   text="Image attribution",
+                                                   text_color=standard_label_text_color,
+                                                   font=heading_4_medium,
+                                                   fg_color=background_color)
+    image_attribution_heading_label.grid(row=14, column=0, columnspan=4, sticky=tk.S, padx=20)
+
+    # place label with the image attribution text
+    image_attribution_text_label = ctk.CTkLabel(settings_page_frame,
+                                                text="Dance image: Image by Freepik\n"
+                                                     "Guitar image: Image by upklyak on Freepik\n"
+                                                     "Cinema image: Image by pch.vector on Freepik\n"
+                                                     "Cooking image: Image by pikisuperstar on Freepik\n"
+                                                     "Creative writing: Image by pch.vector on Freepik\n"
+                                                     "Doing school work: Image by pikisuperstar on Freepik\n\n"
+                                                     "Icons from Material Design (Google)",
+                                                text_color=standard_label_text_color,
+                                                font=normal_text,
+                                                wraplength=330,
+                                                fg_color=background_color)
+    image_attribution_text_label.grid(row=15, column=0, columnspan=4, sticky=tk.N, padx=20)
 
 # define a function which will update the user data after user changes them
 # on the Settings page, Account section and saves changes
