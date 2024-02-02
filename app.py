@@ -1,3 +1,32 @@
+# Before you start:
+# 1. Open PyCharm and go to Terminal where you will write some code.
+# 2. Should you want to make sure everything works smoothly, please install virtual environment.
+    # a. Install it using pip3 install virtualenv
+    # b. Create a virtual environment using
+        # * virtualenv -p python dev (Mac)
+        # * python -m venv dev (Windows)
+    # c. Active the virtual environment using
+        # * source dev/bin/activate (Mac)
+        # * .\dev\Scripts\activate (Windows)
+# 3. Install:
+    # a. pip3 install customtkinter
+    # b. pip3 install pandas
+    # c. pip3 install tkintermapview
+# 4. Check:
+    # a. if your device has Roboto font installed. If not, install all the ttf. files from the subfolder font > Roboto
+    #    on Github.
+    # b. that you have kept the folder structure of the main folder intact. If all images are in the "images" subfolder,
+    #    filepaths for images/icons should be working.
+
+# To start the application:
+# 1. Locate the directory of this file in Terminal using "cd folder_name" for changing directories and "cd .." for going back
+# 2. Start the application by typing "python app.py" or "python3 app.py" in the Terminal
+
+# Note:
+# Check the report on GitHub for a detailed description of what the app contains. The best to do is to just explore around!
+
+# Enjoy!
+
 # importing libraries used in the app
 import tkinter as tk # for creating the gui window
 import customtkinter as ctk # for upgrading the gui design to a modern look
@@ -16,7 +45,7 @@ window = ctk.CTk()
 window.title("Activities 2.0")
 
 # define the icon for the app
-window.iconbitmap('images/app_icon.ico')
+window.iconbitmap("images/app_icon.ico")
 
 # define the width and height of the app
 width, height = 350, 650
@@ -27,6 +56,8 @@ window.geometry(f"{width}x{height}")
 window.minsize(width,height)
 
 # define pathways for images used within functions (must be defined outside of functions to be displayed)
+
+# icons in the main interface
 sun_icon = ctk.CTkImage(light_image=Image.open("images/sun_outline.png"),
                         dark_image=Image.open("images/sun_outline_dark.png"), size=(50, 50))
 plus_icon = ctk.CTkImage(light_image=Image.open("images/plus.png"),
@@ -55,6 +86,7 @@ tick_icon = ctk.CTkImage(light_image=Image.open("images/tick.png"),
                         dark_image=Image.open("images/tick_dark.png"), size=(16, 16))
 whatsapp_icon = ctk.CTkImage(Image.open("images/whatsapp.png"), size=(25, 25))
 
+# icons of the activity types for the map widget
 guitar_icon = tk.PhotoImage(file="images/guitar.png")
 cinema_icon = tk.PhotoImage(file="images/cinema.png")
 cooking_icon = tk.PhotoImage(file="images/cooking.png")
@@ -62,6 +94,7 @@ writing_icon = tk.PhotoImage(file="images/writing.png")
 homework_icon = tk.PhotoImage(file="images/homework.png")
 dance_icon = tk.PhotoImage(file="images/dance.png")
 
+# images of activity types on the Activities page
 playing_guitar_image = ctk.CTkImage(Image.open("images/playing_guitar.jpg"), size=(350, 100))
 going_to_cinema_image = ctk.CTkImage(Image.open("images/going_to_cinema.jpg"), size=(350, 100))
 cooking_image = ctk.CTkImage(Image.open("images/cooking.jpg"), size=(350, 100))
@@ -69,6 +102,7 @@ creative_writing_image = ctk.CTkImage(Image.open("images/creative_writing.jpg"),
 doing_school_work_together_image = ctk.CTkImage(Image.open("images/doing_school_work_together.jpg"), size=(350, 100))
 social_dancing_image = ctk.CTkImage(Image.open("images/social_dancing.jpg"), size=(350, 100))
 
+# square images of activity types on the Connections page
 playing_guitar_square_image = ctk.CTkImage(Image.open("images/playing_guitar_box.jpg"), size=(100, 100))
 going_to_cinema_square_image = ctk.CTkImage(Image.open("images/going_to_cinema_box.jpg"), size=(100, 100))
 cooking_square_image = ctk.CTkImage(Image.open("images/cooking_box.jpg"), size=(100, 100))
