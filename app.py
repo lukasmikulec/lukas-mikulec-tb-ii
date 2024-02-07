@@ -1073,7 +1073,6 @@ def show_activity_marker(unique_activity_identifier):
                                                            data=[unique_activity_identifier,"map_page_all_activities"],
                                                            command=show_activity_details_from_the_map)
 
-
 # define the Map page, section of all activities
 def map_page_all_activities():
     # make the frame available for the function bottom_navigation_bar
@@ -1109,6 +1108,26 @@ def map_page_all_activities():
                              height=50,
                              compound="left")
     upper_bar.grid(row=0, column=0, columnspan=4, sticky=tk.NSEW)
+
+    # nearby activities on a map button
+    nearby_activities_map_button = ctk.CTkButton(map_page_frame,
+                                                 text="Only activities nearby",
+                                                 text_color=standard_label_text_color,
+                                                 fg_color=box_color,
+                                                 hover_color=box_hover_color,
+                                                 command=map_page_nearby_activities)
+    nearby_activities_map_button.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW)
+
+    # all activities on a map button
+    all_activities_map_button = ctk.CTkButton(map_page_frame,
+                                              text="All activities",
+                                              text_color=standard_label_text_color,
+                                              image=tick_icon,
+                                              fg_color=box_selected_color,
+                                              hover_color=box_hover_color,
+                                              hover="disabled",
+                                              command=None)
+    all_activities_map_button.grid(row=1, column=2, columnspan=2, sticky=tk.NSEW)
 
     # get user's IP location
     user_location = geocoder.ip("me")
@@ -1159,27 +1178,7 @@ def map_page_all_activities():
         show_activity_marker(unique_activity_identifier)
 
     # place the map widget to the grid
-    map_all_activities_widget.grid(row=1, column=0, rowspan=15, columnspan=4, sticky=tk.NSEW)
-
-    # nearby activities on a map button
-    nearby_activities_map_button = ctk.CTkButton(map_page_frame,
-                                               text="Only activities nearby",
-                                               text_color=standard_label_text_color,
-                                               fg_color=box_color,
-                                               hover_color=box_hover_color,
-                                               command=map_page_nearby_activities)
-    nearby_activities_map_button.grid(row=16, column=0, columnspan=2, sticky=tk.NSEW)
-
-    # all activities on a map button
-    all_activities_map_button = ctk.CTkButton(map_page_frame,
-                                              text="All activities",
-                                              text_color=standard_label_text_color,
-                                              image=tick_icon,
-                                              fg_color=box_selected_color,
-                                              hover_color=box_hover_color,
-                                              hover="disabled",
-                                              command=None)
-    all_activities_map_button.grid(row=16, column=2, columnspan=2, sticky=tk.NSEW)
+    map_all_activities_widget.grid(row=2, column=0, rowspan=18, columnspan=4, sticky=tk.NSEW)
 
 # define the Map page, section of nearby activities
 def map_page_nearby_activities():
@@ -1216,6 +1215,26 @@ def map_page_nearby_activities():
                              height=50,
                              compound="left")
     upper_bar.grid(row=0, column=0, columnspan=4, sticky=tk.NSEW)
+
+    # nearby activities on a map button
+    nearby_activities_map_button = ctk.CTkButton(map_page_frame,
+                                                 text="Only activities nearby",
+                                                 text_color=standard_label_text_color,
+                                                 image=tick_icon,
+                                                 fg_color=box_selected_color,
+                                                 hover_color=box_hover_color,
+                                                 hover="disabled",
+                                                 command=None)
+    nearby_activities_map_button.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW)
+
+    # all activities on a map button
+    all_activities_map_button = ctk.CTkButton(map_page_frame,
+                                              text="All activities",
+                                              text_color=standard_label_text_color,
+                                              fg_color=box_color,
+                                              hover_color=box_hover_color,
+                                              command=map_page_all_activities)
+    all_activities_map_button.grid(row=1, column=2, columnspan=2, sticky=tk.NSEW)
 
     # get user's IP location
     user_location = geocoder.ip("me")
@@ -1331,27 +1350,7 @@ def map_page_nearby_activities():
     # set map zoom
     map_nearby_activities_widget.set_zoom(8)
     # place the map widget to the grid
-    map_nearby_activities_widget.grid(row=1, column=0, rowspan=15, columnspan=4, sticky=tk.NSEW)
-
-    # nearby activities on a map button
-    nearby_activities_map_button = ctk.CTkButton(map_page_frame,
-                                                 text="Only activities nearby",
-                                                 text_color=standard_label_text_color,
-                                                 image=tick_icon,
-                                                 fg_color=box_selected_color,
-                                                 hover_color=box_hover_color,
-                                                 hover="disabled",
-                                                 command=None)
-    nearby_activities_map_button.grid(row=16, column=0, columnspan=2, sticky=tk.NSEW)
-
-    # all activities on a map button
-    all_activities_map_button = ctk.CTkButton(map_page_frame,
-                                              text="All activities",
-                                              text_color=standard_label_text_color,
-                                              fg_color=box_color,
-                                              hover_color=box_hover_color,
-                                              command=map_page_all_activities)
-    all_activities_map_button.grid(row=16, column=2, columnspan=2, sticky=tk.NSEW)
+    map_nearby_activities_widget.grid(row=2, column=0, rowspan=18, columnspan=4, sticky=tk.NSEW)
 
 # define a function which will show the details of an activity
 def show_activity_details(unique_activity_identifier, source):
