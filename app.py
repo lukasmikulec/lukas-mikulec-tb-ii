@@ -390,117 +390,137 @@ def update_settings():
     # check if the user inputted at least one information to change
     if ((len(activity1_change_value.get()) == 0 and len(activity2_change_value.get()) == 0
          and len(looking_for_change_value) == 0 and len(password_change_entry.get()) == 0)):
-        # if not, remind them they have to fill something to change the settings
+        # if not, remind them that they have to fill something to change the settings
         tk.messagebox.showwarning("Warning", "Please fill at least one field to update your settings.")
-    # if they changed at least one information, save those changes to the csv file
+    # if they changed at least one information
     else:
+        # first check if the changes are valid
+
         # read the csv file with user data
         user_database = pd.read_csv("data/users_data.csv")
         # set usernames as the index
         user_database.set_index("username", inplace=True)
 
-        # if the user did not change their first preferred activity
-        if len(activity1_change_value.get()) == 0:
-            # skip the update of this parameter
-            pass
-        # if the user changed their first preferred activity
-        else:
-            # check if this activity is not already selected
-            if (activity1_change_value.get() == user_database.loc[current_username, "activity1"]
-                    or activity1_change_value.get() == user_database.loc[current_username, "activity2"]):
-                # if yes, remind user to select new activity type
-                tk.messagebox.showwarning("Warning", "Activity you wanted to enter for the first "
-                                                     "preference is already selected. To make a change, select "
-                                                     "a new one (which is not in your first or "
-                                                     "second preference already).")
-            # if no
+        # create a set based on which we will decide in the end whether to save the changes (they are valid) or not to
+        # save the changes (they are invalid)
+        valid_changes = []
+
+        # if the user changed the first activity preference to a one which is already in their first or second preference
+        if (activity1_change_value.get() == user_database.loc[current_username, "activity1"]
+                or activity1_change_value.get() == user_database.loc[current_username, "activity2"]):
+            # save an error to the valid_changes list
+            valid_changes.append("No")
+            # remind user to select new activity type for the first activity preference
+            tk.messagebox.showwarning("Warning", "Activity you wanted to enter for the first "
+                                                 "preference is already selected. To make a change, select "
+                                                 "a new one (which is not in your first or "
+                                                 "second preference already).")
+
+        # if the user changed the second activity preference to a one which is already in their first or second preference
+        if (activity2_change_value.get() == user_database.loc[current_username, "activity1"]
+                or activity1_change_value.get() == user_database.loc[current_username, "activity2"]):
+            # save an error to the valid_changes list
+            valid_changes.append("No")
+            # remind user to select new activity type for the second activity preference
+            tk.messagebox.showwarning("Warning", "Activity you wanted to enter for the second preference "
+                                                 "is already selected. To make a change, select a new one "
+                                                 "(which is not in your first or second preference already).")
+
+        # define numbers for checking the new password's strength
+        numbers = "0123456789"
+        # define what counts as special characters for checking the password strength
+        special_characters = "!@#$%^&*()-+?_=,<>/"
+
+        # if the new password was entered and is shorter than 6 characters
+        if len(password_change_entry.get()) != 0 and len(password_change_entry.get()) < 6:
+            # save an error to the valid_changes list
+            valid_changes.append("No")
+            # display desktop warning that it must be longer
+            tk.messagebox.showwarning("Warning",
+                                      "Password must be at least 6 characters long.")
+        # if the new password has at least 6 characters
+        elif len(password_change_entry.get()) != 0 and len(password_change_entry.get()) >= 6:
+            # check if the new password contains at least one number
+            if any(c in numbers for c in password_change_entry.get()):
+                # if so, check if the new password contains at least one special character
+                if any(c in special_characters for c in password_change_entry.get()):
+                    # if so, pass (we do not need to report an error)
+                    pass
+                # if the new password does not contain at least one special character
+                else:
+                    # save an error to the valid_changes list
+                    valid_changes.append("No")
+                    # display desktop warning that the new password must contain at least one special character
+                    tk.messagebox.showwarning("Warning",
+                                              "Password must contain at least one special character.")
+            # if the new password does not contain at least one number
+            else:
+                # save an error to the valid_changes list
+                valid_changes.append("No")
+                # display desktop warning that new password must contain at least one number
+                tk.messagebox.showwarning("Warning",
+                                          "Password must contain at least one number.")
+
+        # if the changes are valid, save those changes to the csv file
+        if len(valid_changes) == 0:
+            # read the csv file with user data
+            user_database = pd.read_csv("data/users_data.csv")
+            # set usernames as the index
+            user_database.set_index("username", inplace=True)
+
+            # if the user did not change their first preferred activity
+            if len(activity1_change_value.get()) == 0:
+                # skip the update of this parameter
+                pass
+            # if the user changed their first preferred activity
             else:
                 # change the activity1 preference in the row of the current user
                 user_database.loc[current_username, "activity1"] = activity1_change_value.get()
                 # update the csv file
                 user_database.to_csv('data/users_data.csv')
-                # inform the user that changes were saved
-                tk.messagebox.showinfo("Success", "Your changes were saved.")
-                # reload the settings page with new settings
-                settings_page_account()
 
-        # if the user did not change their second preferred activity
-        if len(activity2_change_value.get()) == 0:
-            pass
-        # if the user changed their second preferred activity
-        else:
-            # check if this activity is not already selected
-            if (activity2_change_value.get() == user_database.loc[current_username, "activity1"]
-                    or activity1_change_value.get() == user_database.loc[current_username, "activity2"]):
-                # if yes, remind user to select new activity type
-                tk.messagebox.showwarning("Warning","Activity you wanted to enter for the second preference "
-                                                    "is already selected. To make a change, select a new one "
-                                                    "(which is not in your first or second preference already).")
-            # if no
+            # if the user did not change their second preferred activity
+            if len(activity2_change_value.get()) == 0:
+                # skip the update of this parameter
+                pass
+            # if the user changed their second preferred activity
             else:
                 # change the activity2 preference in the row of the current user
                 user_database.loc[current_username, "activity2"] = activity2_change_value.get()
                 # update the csv file
                 user_database.to_csv('data/users_data.csv')
-                # inform the user that changes were saved
-                tk.messagebox.showinfo("Success", "Your changes were saved.")
-                # reload the settings page with new settings
-                settings_page_account()
 
-        # if the user did not change their preference regarding individual/group
-        if len(looking_for_change_value) == 0:
-            pass
-        # if the user changed their preference regarding individual/group
-        else:
-            # change the individual/group preference in the row of the current user
-            user_database.loc[current_username, "looking_for"] = looking_for_change_value
-            # update the csv file
-            user_database.to_csv('data/users_data.csv')
-            # inform the user that changes were saved
+            # if the user did not change their preference regarding individual/group
+            if len(looking_for_change_value) == 0:
+                # skip the update of this parameter
+                pass
+            # if the user changed their preference regarding individual/group
+            else:
+                # change the individual/group preference in the row of the current user
+                user_database.loc[current_username, "looking_for"] = looking_for_change_value
+                # update the csv file
+                user_database.to_csv('data/users_data.csv')
+
+            # if the user did not change their password
+            if len(password_change_entry.get()) == 0:
+                # skip the update of this parameter
+                pass
+            # if the user changed their password
+            else:
+                # change the password in the row of the current user
+                user_database.loc[current_username, "password"] = password_change_entry.get()
+                # update the csv file
+                user_database.to_csv('data/users_data.csv')
+
+            # after updating at least one user setting and saving it to csv file, inform the user that changes were saved
             tk.messagebox.showinfo("Success", "Your changes were saved.")
             # reload the settings page with new settings
             settings_page_account()
 
-        # if the user did not change their password
-        if len(password_change_entry.get()) == 0:
-            pass
-        # if the user changed their password
+        # if the changes are not valid
         else:
-            # define numbers for checking the new password's strength
-            numbers = "0123456789"
-            # define what counts as special characters for checking the password strength
-            special_characters = "!@#$%^&*()-+?_=,<>/"
-
-            # if the new password is shorter than 6 characters
-            if len(password_change_entry.get()) < 6:
-                # display desktop warning that it must be longer
-                tk.messagebox.showwarning("Warning",
-                                          "Password must be at least 6 characters long.")
-            # if the new password has at least 6 characters
-            else:
-                # check if the new password contains at least one number
-                if any(c in numbers for c in password_change_entry.get()):
-                    # if so, check if the new password contains at least one special character
-                    if any(c in special_characters for c in password_change_entry.get()):
-                        # change the password in the row of the current user
-                        user_database.loc[current_username, "password"] = password_change_entry.get()
-                        # update the csv file
-                        user_database.to_csv('data/users_data.csv')
-                        # inform the user that changes were saved
-                        tk.messagebox.showinfo("Success", "Your changes were saved.")
-                        # reload the settings page with new settings
-                        settings_page_account()
-                    # if the password does not contain at least one special character, remind the user
-                    else:
-                        # display desktop warning
-                        tk.messagebox.showwarning("Warning",
-                                                  "Username must contain at least one special character.")
-                # if the password does not contain at least one number, remind the user
-                else:
-                    # display desktop warning
-                    tk.messagebox.showwarning("Warning",
-                                              "Username must contain at least one number.")
-
+            # do not save them
+            pass
 
 # define the "Account settings" tab of the Settings page
 def settings_page_account():
