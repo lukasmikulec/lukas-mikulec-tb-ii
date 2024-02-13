@@ -22,8 +22,12 @@
 # 1. Locate the directory of this file in Terminal using "cd folder_name" for changing directories and "cd .." for going back
 # 2. Start the application by typing "python app.py" or "python3 app.py" in the Terminal
 
-# Note:
-# Check the report on GitHub for a detailed description of what the app contains. The best to do is to just explore around!
+# Notes:
+# 1. Check the report on GitHub for a detailed description of what the app contains. The best to do is to just explore around!
+# 2. The app will save your location based on your IP address when you create a new account and use it for the default
+#    position of the map. As the model activities are all in Hamburg, in case you are not in Hamburg, you can use
+#    the model user to be placed there by default. Username: maxmuster Password: password123- This is just to ensure you
+#    do not have to always move to Hamburg manually when you load the map. Try the registration process anyway!
 
 # Enjoy!
 
@@ -246,13 +250,13 @@ def settings_page_app():
     # place the Settings page frame to the window
     settings_page_frame.pack(fill="both", expand=1)  # fill "both" means horizontally and vertically
 
-    # define the grid layout for the home page
+    # define the grid layout for the Settings page
     for i in range(20):
         settings_page_frame.rowconfigure(i, weight=1)
     for i in range(4):
         settings_page_frame.columnconfigure(i, weight=1)
 
-    # display the bottom_navigation_bar by passing the home page_frame
+    # display the bottom_navigation_bar by passing the Settings page frame
     # and same number of rows as defined in the grid structure
     bottom_navigation_bar("settings_page_frame", 20)
 
@@ -275,7 +279,7 @@ def settings_page_app():
                                             command=settings_page_account)
     account_settings_button.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW)
 
-    # app settings button
+    # app settings and info button
     app_settings_button = ctk.CTkButton(settings_page_frame,
                                         text="App settings and info",
                                         text_color=standard_label_text_color,
@@ -321,7 +325,7 @@ def settings_page_app():
                                             command=switch_dark_mode)
     switch_dark_mode_toggle.grid(row=5, column=1, columnspan=2)
 
-    # create a canvas widget which will serve as a separator and place it to the grid
+    # create a canvas widget which will serve as a separator between the toggle and the text and place it to the grid
     canvas = tk.Canvas(settings_page_frame, bg="navyblue", highlightthickness=0, width=3000, height=2)
     canvas.grid(row=8, column=0, columnspan=4)
 
@@ -514,7 +518,7 @@ def update_settings():
 
             # after updating at least one user setting and saving it to csv file, inform the user that changes were saved
             tk.messagebox.showinfo("Success", "Your changes were saved.")
-            # reload the settings page with new settings
+            # reload the settings page, account section with new settings
             settings_page_account()
 
         # if the changes are not valid
@@ -1043,8 +1047,6 @@ def show_activity_marker(unique_activity_identifier):
 
     # based on unique activity identifier passed to the function, get the activity's name
     activity_name = activities_database.loc[unique_activity_identifier, "activity_name"]
-    # based on unique activity identifier passed to the function, get the activity's people
-    activity_people = activities_database.loc[unique_activity_identifier, "names"]
     # based on unique activity identifier passed to the function, get the activity's latitude
     activity_latitude = activities_database.loc[unique_activity_identifier, "latitude"]
     # based on unique activity identifier passed to the function, get the activity's longitude
@@ -1082,7 +1084,7 @@ def show_activity_marker(unique_activity_identifier):
     # set the activity marker
     activity_marker = map_all_activities_widget.set_marker(activity_latitude,
                                                            activity_longitude,
-                                                           text=f"{activity_name} with {activity_people}",
+                                                           text=activity_name,
                                                            text_color="navy",
                                                            font=heading_4_medium,
                                                            icon=activity_icon,
@@ -1149,9 +1151,6 @@ def map_page_all_activities():
                                               command=None)
     all_activities_map_button.grid(row=1, column=2, columnspan=2, sticky=tk.NSEW)
 
-    # get user's IP location
-    user_location = geocoder.ip("me")
-
     # read the csv file with user data
     user_database = pd.read_csv("data/users_data.csv")
     # set usernames as the index
@@ -1164,6 +1163,10 @@ def map_page_all_activities():
     user_status = user_database.loc[current_username, "status"]
     # load the group/individual preference of the user
     group_preference = user_database.loc[current_username, "looking_for"]
+    # load the user's location latitude
+    user_latitude = float(user_database.loc[current_username, "latitude"])
+    # load the user's location longitude
+    user_longitude = float(user_database.loc[current_username, "longitude"])
 
     # read the csv file with activities data
     activities_database = pd.read_csv("data/activities_data.csv")
@@ -1186,9 +1189,9 @@ def map_page_all_activities():
     # create map widget
     map_all_activities_widget = tkmap.TkinterMapView(map_page_frame, width=350, height=600, corner_radius=0)
     # set map widget to the user's location
-    map_all_activities_widget.set_position(user_location.lat, user_location.lng)
+    map_all_activities_widget.set_position(user_latitude, user_longitude)
     # set map zoom
-    map_all_activities_widget.set_zoom(8)
+    map_all_activities_widget.set_zoom(12)
 
     # for as many activities as there are within the user's preferences
     for i in range(len(selected_activities)):
@@ -1256,8 +1259,14 @@ def map_page_nearby_activities():
                                               command=map_page_all_activities)
     all_activities_map_button.grid(row=1, column=2, columnspan=2, sticky=tk.NSEW)
 
-    # get user's IP location
-    user_location = geocoder.ip("me")
+    # read the csv file with user data
+    user_database = pd.read_csv("data/users_data.csv")
+    # set usernames as the index
+    user_database.set_index("username", inplace=True)
+    # load the user's location latitude
+    user_latitude = float(user_database.loc[current_username, "latitude"])
+    # load the user's location longitude
+    user_longitude = float(user_database.loc[current_username, "longitude"])
 
     # read the csv file with activity data
     activities_database = pd.read_csv("data/activities_data.csv")
@@ -1266,8 +1275,6 @@ def map_page_nearby_activities():
 
     # based on activity1_identifier from home page, get the activity1's name
     activity1_name = activities_database.loc[activity1_identifier, "activity_name"]
-    # based on activity1_identifier from home page, get the activity1's people
-    activity1_people = activities_database.loc[activity1_identifier, "names"]
     # based on activity1_identifier from home page, get the activity1's latitude
     activity1_latitude = activities_database.loc[activity1_identifier, "latitude"]
     # based on activity1_identifier from home page, get the activity1's longitude
@@ -1277,8 +1284,6 @@ def map_page_nearby_activities():
 
     # based on activity2_identifier from home page, get the activity2's name
     activity2_name = activities_database.loc[activity2_identifier, "activity_name"]
-    # based on activity2_identifier from home page, get the activity2's people
-    activity2_people = activities_database.loc[activity2_identifier, "names"]
     # based on activity2_identifier from home page, get the activity2's latitude
     activity2_latitude = activities_database.loc[activity2_identifier, "latitude"]
     # based on activity2_identifier from home page, get the activity2's longitude
@@ -1341,11 +1346,11 @@ def map_page_nearby_activities():
     # create map widget
     map_nearby_activities_widget = tkmap.TkinterMapView(map_page_frame, width=350, height=600, corner_radius=0)
     # set map widget to the user's location
-    map_nearby_activities_widget.set_position(user_location.lat, user_location.lng)
+    map_nearby_activities_widget.set_position(user_latitude, user_longitude)
     # set activities markers
     activity1_marker = map_nearby_activities_widget.set_marker(activity1_latitude,
                                                                activity1_longitude,
-                                                               text=f"{activity1_name} with {activity1_people}",
+                                                               text=activity1_name,
                                                                text_color="navy",
                                                                font=heading_4_medium,
                                                                icon=activity1_icon,
@@ -1357,7 +1362,7 @@ def map_page_nearby_activities():
                                                                command=show_activity_details_from_the_map)
     activity2_marker = map_nearby_activities_widget.set_marker(activity2_latitude,
                                                                activity2_longitude,
-                                                               text=f"{activity2_name} with {activity2_people}",
+                                                               text=activity2_name,
                                                                text_color="navy",
                                                                font=heading_4_medium,
                                                                icon=activity2_icon,
@@ -1368,7 +1373,7 @@ def map_page_nearby_activities():
                                                                data=[activity2_identifier,"map_page_nearby_activities"],
                                                                command=show_activity_details_from_the_map)
     # set map zoom
-    map_nearby_activities_widget.set_zoom(8)
+    map_nearby_activities_widget.set_zoom(12)
     # place the map widget to the grid
     map_nearby_activities_widget.grid(row=2, column=0, rowspan=18, columnspan=4, sticky=tk.NSEW)
 
@@ -2160,8 +2165,11 @@ def submit_password(username,name,status,activity1,activity2,looking_for,passwor
 
                 # header welcoming user to the app after registering
                 before_home_page_header = ctk.CTkLabel(password_confirmation_frame,
-                                                       text=f"All set, {current_username}!", fg_color="#ded9e0",
-                                                       text_color=standard_label_text_color, font=heading_1)
+                                                       text=f"All set, {name}!",
+                                                       text_color=standard_label_text_color,
+                                                       font=heading_1,
+                                                       wraplength=300,
+                                                       fg_color="#ded9e0")
                 before_home_page_header.grid(row=1, column=0)
 
                 # description explaining what to do next
@@ -2254,7 +2262,7 @@ def create_password(username,name,status,activity1,activity2,looking_for):
 
     # inform user that by continuing, their geolocation will be used
     location_info = ctk.CTkLabel(password_setup_page_frame,
-                                 text="When you continue, your location\nwill be stored based on your IP address",
+                                 text="When you continue, your location\nwill be stored based on your IP address.",
                                  text_color=standard_label_text_color,
                                  font=heading_4,
                                  fg_color=background_color)
