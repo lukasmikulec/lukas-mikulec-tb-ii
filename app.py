@@ -28,6 +28,8 @@
 #    position of the map. As the model activities are all in Hamburg, in case you are not in Hamburg, you can use
 #    the model user to be placed there by default. Username: maxmuster Password: password123- This is just to ensure you
 #    do not have to always move to Hamburg manually when you load the map. Try the registration process anyway!
+# 3. If the app becomes unresponsive, just close it, open it again and log in. This happens only if you click between
+#    the pages containing the map widget too quickly (the map widget needs time to load).
 
 # Enjoy!
 
