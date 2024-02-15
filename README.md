@@ -1,4 +1,4 @@
-# Activities ReadMe
+# README Activities
 
 ## What are *Activities*?
 Activities app is trying to solve the problem of bubble creation among immigrants in Germany. The mechanism of the app is to connect people based on activities they like to do or would like to try. The connection always happens between German(s) and non-German(s) which should help with the integration process in Germany and spark genuine connections across cultural divides.
